@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bella Massa | Pedido Online</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>🍕 Bella Massa</h1>
+  <p id="status">🟢 Aberto • Entrega rápida</p>
+</header>
+
+<!-- PROMOÇÃO PRINCIPAL -->
+<section class="promo">
+  <h2>🔥 PROMOÇÃO DO DIA</h2>
+  <p class="oferta">Pizza Grande + Coca-Cola 2L</p>
+  <div class="precos">
+    <span class="antes">De R$ 70,00</span>
+    <span class="agora">Por R$ 65,00</span>
+  </div>
+  <div class="contador">
+    ⏰ Promoção acaba em <span id="tempo">15:00</span>
+  </div>
+  <button onclick="selecionarCombo('Pizza Grande + Coca 2L',65)">
+    QUERO ESSA PROMO 🍕
+  </button>
+</section>
+
+<!-- COMBOS -->
+<section class="combos">
+  <h2>⭐ Combos que Mais Vendem</h2>
+
+  <div class="card destaque" onclick="selecionarCombo('Pizza Grande + Coca 2L',65)">
+    <img src="https://images.unsplash.com/photo-1601924638867-3ec4d58c2f5d?auto=format&fit=crop&w=900&q=80">
+    <h3>Pizza Grande + Coca 2L</h3>
+    <p>R$ 65,00</p>
+  </div>
+
+  <div class="card" onclick="selecionarCombo('2 Pizzas Grandes + Coca 2L',115)">
+    <img src="https://images.unsplash.com/photo-1548365328-8b849e6a2d6b?auto=format&fit=crop&w=900&q=80">
+    <h3>2 Pizzas Grandes + Coca 2L</h3>
+    <p>R$ 115,00</p>
+  </div>
+</section>
+
+<!-- MONTE SUA PIZZA -->
+<section class="montar">
+  <h2>🍕 Monte sua Pizza</h2>
+
+  <label>Tamanho:</label>
+  <select id="tamanho">
+    <option value="45">Média (30cm) - R$ 45</option>
+    <option value="55">Grande (35cm) - R$ 55</option>
+  </select>
+
+  <label>Escolha até 2 sabores:</label>
+  <div class="opcoes">
+    <label><input type="checkbox" value="Calabresa"> Calabresa</label>
+    <label><input type="checkbox" value="Frango com Catupiry"> Frango c/ Catupiry</label>
+    <label><input type="checkbox" value="Portuguesa"> Portuguesa</label>
+    <label><input type="checkbox" value="Carne Seca"> Carne Seca</label>
+    <label><input type="checkbox" value="Frango com Bacon"> Frango c/ Bacon</label>
+    <label><input type="checkbox" value="A Moda"> A Moda</label>
+    <label><input type="checkbox" value="Strogonoff"> Strogonoff</label>
+    <label><input type="checkbox" value="Tradicional 4 Sabores"> Tradicional 4 Sabores</label>
+    <label><input type="checkbox" value="4 Queijos"> 4 Queijos</label>
+    <label><input type="checkbox" value="Bacon"> Bacon</label>
+  </div>
+
+  <label>Borda Recheada:</label>
+  <select id="borda">
+    <option value="0">Sem borda</option>
+    <option value="10">Cheddar + R$10</option>
+    <option value="10">Catupiry + R$10</option>
+    <option value="12">Mussarela + R$12</option>
+    <option value="12">Chocolate + R$12</option>
+    <option value="12">Ninho + R$12</option>
+  </select>
+
+  <label>➕ Adicionais (opcional):</label>
+  <div class="opcoes">
+    <label><input type="checkbox" data-extra="5"> Catupiry extra (+R$5)</label>
+    <label><input type="checkbox" data-extra="5"> Mussarela extra (+R$5)</label>
+    <label><input type="checkbox" data-extra="5"> Cheddar extra (+R$5)</label>
+    <label><input type="checkbox" data-extra="6"> Bacon extra (+R$6)</label>
+    <label><input type="checkbox" data-extra="6"> Chocolate extra (+R$6)</label>
+    <label><input type="checkbox" data-extra="6"> Ninho extra (+R$6)</label>
+  </div>
+
+  <button onclick="finalizarPedido()">FINALIZAR PEDIDO</button>
+</section>
+
+<!-- AVALIAÇÕES -->
+<section class="avaliacoes">
+  <h2>⭐ Avaliações Reais</h2>
+  <p>⭐⭐⭐⭐⭐ “Pizza bem recheada e entrega rápida!”</p>
+  <p>⭐⭐⭐⭐⭐ “Melhor custo-benefício da região.”</p>
+  <p>⭐⭐⭐⭐⭐ “Sempre peço, nunca decepciona.”</p>
+</section>
+
+<footer>
+  <p>🚀 Entrega rápida • 💳 PIX • 📲 WhatsApp</p>
+</footer>
+
+<!-- MODAL PIX -->
+<div id="pixModal">
+  <div class="pixBox">
+    <h2>💳 Pagamento PIX</h2>
+    <p id="resumo"></p>
+    <img id="qr">
+    <input id="pix" readonly>
+    <button onclick="copiarPix()">Copiar PIX</button>
+    <button onclick="pegarLocalizacao()" class="local">📍 Usar minha localização</button>
+    <button onclick="confirmar()">Já paguei</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

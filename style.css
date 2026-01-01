@@ -1,0 +1,99 @@
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+
+body{background:#fff3e0}
+
+header{
+  background:linear-gradient(135deg,#b71c1c,#ff9800);
+  color:#fff;
+  text-align:center;
+  padding:20px
+}
+
+section{padding:20px}
+
+h2{color:#b71c1c;margin-bottom:12px}
+
+.promo,.avaliacoes,.montar{
+  background:#fff;
+  border-radius:16px;
+  margin:15px;
+  padding:20px;
+  box-shadow:0 6px 16px rgba(0,0,0,.2)
+}
+
+.oferta{font-size:1.3rem;font-weight:bold}
+
+.precos .antes{text-decoration:line-through;color:#999}
+.precos .agora{color:#2e7d32;font-size:1.4rem;font-weight:bold}
+
+.contador{
+  background:#ffebee;
+  padding:10px;
+  border-radius:10px;
+  margin:10px 0;
+  font-weight:bold;
+  color:#c62828
+}
+
+.card{
+  background:#fff;
+  border-radius:14px;
+  overflow:hidden;
+  margin-bottom:15px;
+  box-shadow:0 4px 12px rgba(0,0,0,.25)
+}
+
+.card img{width:100%;height:200px;object-fit:cover}
+
+.card h3{padding:10px}
+.card p{padding:0 10px 10px;color:#2e7d32;font-weight:bold}
+
+.destaque{border:4px solid #ff9800}
+
+.opcoes{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+
+select,button{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  margin-top:10px
+}
+
+button{
+  background:#b71c1c;
+  color:#fff;
+  font-weight:bold;
+  border:none;
+  font-size:1.1rem
+}
+
+footer{
+  background:#b71c1c;
+  color:#fff;
+  text-align:center;
+  padding:15px
+}
+
+/* PIX */
+#pixModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  align-items:center;
+  justify-content:center
+}
+
+.pixBox{
+  background:#fff;
+  padding:20px;
+  border-radius:16px;
+  width:90%;
+  max-width:420px;
+  text-align:center
+}
+
+.pixBox img{width:240px;margin:10px auto}
+.pixBox input{width:100%;padding:10px;text-align:center;font-weight:bold}
+
+.local{background:#ff9800}
