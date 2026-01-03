@@ -1,123 +1,264 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
+  <div class="urgencia">
+  ⏰ Promoção por tempo limitado — acaba em
+  <span id="contador">10:00</span>
+</div>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bella Massa | Pedido Online</title>
-<link rel="stylesheet" href="style.css">
+<title>Produtos Digitais Lucrativos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style><div class="prova">
+  ⭐⭐⭐⭐⭐ Avaliação média dos compradores <br>
+  <small>✔ Compra verificada</small>
+</div>.urgencia {
+  background: #ffe9e9;
+  color: #b30000;
+  text-align: center;
+  padding: 12px;
+  font-weight: bold;
+  font-size: 14px;
+}
+<script>let tempo=600; // 10 minutos
+
+setInterval(()=> {
+    let minutos=Math.floor(tempo / 60);
+    let segundos=tempo % 60;
+    
+    document.getElementById("contador").innerText=minutos + ":" + (segundos < 10 ? "0" : "") + segundos;
+    
+    if (tempo > 0) tempo--;
+  }
+  
+  , 1000);
+</script>body {
+  margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  background:#f4f6f8;
+  color:#222;
+}
+header {
+  background: linear-gradient(135deg,#0f0f0f,#1c1c1c);
+  color:#fff;
+  padding:35px 20px;
+  text-align:center;
+}
+header h1 {
+  margin:0;
+  font-size:28px;
+}
+header p {
+  margin-top:8px;
+  font-size:15px;
+  opacity:.85;
+}
+.container {
+  max-width:720px;
+  margin:auto;
+  padding:20px;
+}
+.produto {
+  background:#fff;
+  border-radius:12px;
+  padding:18px;
+  margin-bottom:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+}
+.produto h2 {
+  margin:0 0 6px;
+  font-size:20px;
+}
+.produto p {
+  margin:0 0 10px;
+  font-size:14px;
+  color:#555;
+}
+.preco {
+  font-size:22px;
+  font-weight:bold;
+  color:#0a7c2f;
+}
+.btn {
+  display:block;
+  margin-top:14px;
+  padding:14px;
+  text-align:center;
+  background:#25D366;
+  color:#fff;
+  text-decoration:none;
+  border-radius:10px;
+  font-size:16px;
+  font-weight:600;
+}
+.btn:hover {
+  background:#1fb357;
+}
+.kit {
+  border:2px solid #25D366;
+}
+.prova {
+  font-size:13px;
+  color:#666;
+  background:#f1f1f1;
+  padding:10px;
+  border-radius:8px;
+  margin-top:10px;
+}
+footer {
+  background:#111;
+  color:#bbb;
+  text-align:center;
+  padding:20px;
+  font-size:13px;
+}
+footer span {
+  display:block;
+  margin-top:6px;
+  color:#25D366;
+}
+</style>
 </head>
+
 <body>
 
 <header>
-  <h1>🍕 Bella Massa</h1>
-  <p id="status">🟢 Aberto • Entrega rápida</p>
+  <h1>📦 Produtos Digitais Lucrativos</h1>
+  <p>Soluções simples que vendem todos os dias</p>
 </header>
 
-<!-- PROMOÇÃO PRINCIPAL -->
-<section class="promo">
-  <h2>🔥 PROMOÇÃO DO DIA</h2>
-  <p class="oferta">Pizza Grande + Coca-Cola 2L</p>
-  <div class="precos">
-    <span class="antes">De R$ 70,00</span>
-    <span class="agora">Por R$ 65,00</span>
-  </div>
-  <div class="contador">
-    ⏰ Promoção acaba em <span id="tempo">15:00</span>
-  </div>
-  <button onclick="selecionarCombo('Pizza Grande + Coca 2L',65)">
-    QUERO ESSA PROMO 🍕
-  </button>
-</section>
+<div class="container">
 
-<!-- COMBOS -->
-<section class="combos">
-  <h2>⭐ Combos que Mais Vendem</h2>
-
-  <div class="card destaque" onclick="selecionarCombo('Pizza Grande + Coca 2L',65)">
-    <img src="https://images.unsplash.com/photo-1601924638867-3ec4d58c2f5d?auto=format&fit=crop&w=900&q=80">
-    <h3>Pizza Grande + Coca 2L</h3>
-    <p>R$ 65,00</p>
+  <div class="produto">
+    <h2>🍔 Cardápio Lucrativo para Delivery</h2>
+    <p>Monte um cardápio que vende mais sem baixar preço.</p>
+    <div class="preco">R$ 19,90
+    <div class="prova">
+  ⭐⭐⭐⭐⭐ Avaliação média dos compradores <br>
+  <small>✔ Compra verificada</small>
+</div></div>
+    <div class="prova">⭐⭐⭐⭐⭐ “Depois que mudei o cardápio, comecei a vender todo dia”</div>
+    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20o%20Cardápio%20Lucrativo%20para%20Delivery">
+      Comprar no WhatsApp
+    </a>
   </div>
 
-  <div class="card" onclick="selecionarCombo('2 Pizzas Grandes + Coca 2L',115)">
-    <img src="https://images.unsplash.com/photo-1548365328-8b849e6a2d6b?auto=format&fit=crop&w=900&q=80">
-    <h3>2 Pizzas Grandes + Coca 2L</h3>
-    <p>R$ 115,00</p>
-  </div>
-</section>
-
-<!-- MONTE SUA PIZZA -->
-<section class="montar">
-  <h2>🍕 Monte sua Pizza</h2>
-
-  <label>Tamanho:</label>
-  <select id="tamanho">
-    <option value="45">Média (30cm) - R$ 45</option>
-    <option value="55">Grande (35cm) - R$ 55</option>
-  </select>
-
-  <label>Escolha até 2 sabores:</label>
-  <div class="opcoes">
-    <label><input type="checkbox" value="Calabresa"> Calabresa</label>
-    <label><input type="checkbox" value="Frango com Catupiry"> Frango c/ Catupiry</label>
-    <label><input type="checkbox" value="Portuguesa"> Portuguesa</label>
-    <label><input type="checkbox" value="Carne Seca"> Carne Seca</label>
-    <label><input type="checkbox" value="Frango com Bacon"> Frango c/ Bacon</label>
-    <label><input type="checkbox" value="A Moda"> A Moda</label>
-    <label><input type="checkbox" value="Strogonoff"> Strogonoff</label>
-    <label><input type="checkbox" value="Tradicional 4 Sabores"> Tradicional 4 Sabores</label>
-    <label><input type="checkbox" value="4 Queijos"> 4 Queijos</label>
-    <label><input type="checkbox" value="Bacon"> Bacon</label>
+  <div class="produto">
+    <h2>💬 Mensagens Prontas para WhatsApp</h2>
+    <p>Copie, cole e venda todos os dias no WhatsApp.</p>
+    <div class="preco">R$ 14,90<div class="prova">
+  ⭐⭐⭐⭐⭐ Avaliação média dos compradores <br>
+  <small>✔ Compra verificada</small>
+</div></div>
+    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20as%20Mensagens%20Prontas%20para%20WhatsApp">
+      Comprar no WhatsApp
+    </a>
   </div>
 
-  <label>Borda Recheada:</label>
-  <select id="borda">
-    <option value="0">Sem borda</option>
-    <option value="10">Cheddar + R$10</option>
-    <option value="10">Catupiry + R$10</option>
-    <option value="12">Mussarela + R$12</option>
-    <option value="12">Chocolate + R$12</option>
-    <option value="12">Ninho + R$12</option>
-  </select>
-
-  <label>➕ Adicionais (opcional):</label>
-  <div class="opcoes">
-    <label><input type="checkbox" data-extra="5"> Catupiry extra (+R$5)</label>
-    <label><input type="checkbox" data-extra="5"> Mussarela extra (+R$5)</label>
-    <label><input type="checkbox" data-extra="5"> Cheddar extra (+R$5)</label>
-    <label><input type="checkbox" data-extra="6"> Bacon extra (+R$6)</label>
-    <label><input type="checkbox" data-extra="6"> Chocolate extra (+R$6)</label>
-    <label><input type="checkbox" data-extra="6"> Ninho extra (+R$6)</label>
+  <div class="produto">
+    <h2>🔥 50 Promoções Prontas para Delivery</h2>
+    <p>Promoções que fazem o cliente comprar agora.</p>
+    <div class="preco">R$ 17,90<div class="prova">
+  ⭐⭐⭐⭐⭐ Avaliação média dos compradores <br>
+  <small>✔ Compra verificada</small>
+</div></div>
+    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20as%2050%20Promoções%20para%20Delivery">
+      Comprar no WhatsApp
+    </a>
   </div>
 
-  <button onclick="finalizarPedido()">FINALIZAR PEDIDO</button>
-</section>
+  <div class="produto">
+    <h2>📸 Cardápio Digital para Instagram</h2>
+    <p>Templates profissionais editáveis no Canva.</p>
+    <div class="preco">R$ 29,90<div class="prova">
+  ⭐⭐⭐⭐⭐ Avaliação média dos compradores <br>
+  <small>✔ Compra verificada</small>
+</div></div>
+    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20o%20Cardápio%20Digital%20para%20Instagram">
+      Comprar no WhatsApp
+    </a>
+  </div>
 
-<!-- AVALIAÇÕES -->
-<section class="avaliacoes">
-  <h2>⭐ Avaliações Reais</h2>
-  <p>⭐⭐⭐⭐⭐ “Pizza bem recheada e entrega rápida!”</p>
-  <p>⭐⭐⭐⭐⭐ “Melhor custo-benefício da região.”</p>
-  <p>⭐⭐⭐⭐⭐ “Sempre peço, nunca decepciona.”</p>
-</section>
+  <div class="produto kit">
+    <h2>📦 KIT COMPLETO DELIVERY LUCRATIVO</h2>
+    <p>Todos os produtos em um único pacote com desconto.</p>
+    <div class="preco">R$ 49,90<div class="prova">
+  ⭐⭐⭐⭐⭐ Avaliação média dos compradores <br>
+  <small>✔ Compra verificada</small>
+</div></div>
+    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20o%20KIT%20Completo%20Delivery%20Lucrativo">
+      Comprar no WhatsApp
+    </a>
+  <div class="depoimentos">
+  <h3>O que dizem quem já comprou</h3>
 
-<footer>
-  <p>🚀 Entrega rápida • 💳 PIX • 📲 WhatsApp</p>
-</footer>
+<div class="depoimento">
+  <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
+  <div>
+    <strong>Carlos M.</strong>
+    <small>Bella massa•Go</small><br>
+    <span>⭐️⭐️⭐️⭐️⭐️</span>
+    <p>“Apliquei o cardápio no mesmo dia e já senti diferença nas vendas.”</p>
+  </div>
+  </p>
+    </div>
+  </div>
 
-<!-- MODAL PIX -->
-<div id="pixModal">
-  <div class="pixBox">
-    <h2>💳 Pagamento PIX</h2>
-    <p id="resumo"></p>
-    <img id="qr">
-    <input id="pix" readonly>
-    <button onclick="copiarPix()">Copiar PIX</button>
-    <button onclick="pegarLocalizacao()" class="local">📍 Usar minha localização</button>
-    <button onclick="confirmar()">Já paguei</button>
+<div class="depoimento">
+  <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
+  <div>
+    <strong>Matheus </strong>
+    <small>Fabbrica di pizza</small><br>
+    <span>⭐⭐⭐⭐⭐</span>
+    <p>“Comprei o kit completo e realmente ajuda quem tem delivery.”</p>
+  <div class="depoimento">
+  <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
+  <div>
+    <strong>Maria.</strong>
+    <small>Sabor Italia</small><br>
+    <span>⭐⭐⭐⭐⭐</span>
+    <p>Me ajudou Bastante super recomendo</p>
   </div>
 </div>
+  </div>
+</div>
+    </div>
+  </div>
+</div></div>
 
-<script src="script.js"></script>
-</body>
-</html>
+</div>
+
+<footer>
+  📲 Compra segura • Entrega imediata • Suporte no WhatsApp
+  <span>WhatsApp: (62) 99919-3066</span>
+</footer>
+
+<a href="https://wa.me/5562999193066"
+   class="whatsapp-float"
+   target="_blank">
+  💬
+</a>
+
+<style>
+.whatsapp-float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #25D366;
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 6px 15px rgba(0,0,0,.3);
+  z-index: 999;
+}
+.whatsapp-float:hover {
+  background: #1ebe5d;
+}
+</style></body>
+</html>""
