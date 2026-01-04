@@ -1,264 +1,333 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <div class="urgencia">
-  ⏰ Promoção por tempo limitado — acaba em
-  <span id="contador">10:00</span>
-</div>
 <meta charset="UTF-8">
 <title>Produtos Digitais Lucrativos</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<style><div class="prova">
-  ⭐⭐⭐⭐⭐ Avaliação média dos compradores <br>
-  <small>✔ Compra verificada</small>
-</div>.urgencia {
-  background: #ffe9e9;
-  color: #b30000;
-  text-align: center;
-  padding: 12px;
-  font-weight: bold;
-  font-size: 14px;
+<style>
+:root{
+  --verde:#25D366;
+  --verde-escuro:#1fa855;
+  --cinza:#6b7280;
+  --fundo:#f4f6f8;
 }
-<script>let tempo=600; // 10 minutos
 
-setInterval(()=> {
-    let minutos=Math.floor(tempo / 60);
-    let segundos=tempo % 60;
-    
-    document.getElementById("contador").innerText=minutos + ":" + (segundos < 10 ? "0" : "") + segundos;
-    
-    if (tempo > 0) tempo--;
-  }
-  
-  , 1000);
-</script>body {
+body{
   margin:0;
-  font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-  background:#f4f6f8;
-  color:#222;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:var(--fundo);
+  color:#111;
 }
-header {
-  background: linear-gradient(135deg,#0f0f0f,#1c1c1c);
+
+/* Urgência */
+.urgencia{
+  background:#fff4f4;
+  color:#9b1c1c;
+  text-align:center;
+  padding:12px;
+  font-size:14px;
+  font-weight:600;
+}
+
+/* Header */
+header{
+  background:linear-gradient(180deg,#0f0f0f,#1c1c1c);
   color:#fff;
-  padding:35px 20px;
+  text-align:center;
+  padding:40px 20px;
+}
+
+header h1{
+  margin:0;
+  font-size:30px;
+}
+
+header p{
+  margin-top:8px;
+  color:#d1d5db;
+}
+
+/* Prova numérica */
+.numeros{
+  display:flex;
+  justify-content:space-around;
+  background:#fff;
+  margin:20px;
+  padding:14px;
+  border-radius:14px;
+  box-shadow:0 6px 18px rgba(0,0,0,.06);
   text-align:center;
 }
-header h1 {
-  margin:0;
-  font-size:28px;
+
+.numeros strong{
+  font-size:18px;
 }
-header p {
-  margin-top:8px;
-  font-size:15px;
-  opacity:.85;
+
+.numeros span{
+  font-size:12px;
+  color:var(--cinza);
 }
-.container {
+
+/* Conteúdo */
+.container{
   max-width:720px;
   margin:auto;
-  padding:20px;
+  padding:22px;
 }
-.produto {
+
+.produto{
   background:#fff;
-  border-radius:12px;
-  padding:18px;
-  margin-bottom:18px;
-  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  border-radius:14px;
+  padding:20px;
+  margin-bottom:22px;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
-.produto h2 {
+
+.produto h2{
   margin:0 0 6px;
-  font-size:20px;
+  font-size:21px;
 }
-.produto p {
-  margin:0 0 10px;
+
+.produto p{
+  margin:0 0 12px;
   font-size:14px;
-  color:#555;
+  color:var(--cinza);
 }
-.preco {
-  font-size:22px;
-  font-weight:bold;
+
+.preco{
+  font-size:24px;
+  font-weight:700;
   color:#0a7c2f;
 }
-.btn {
+
+.prova{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  padding:12px;
+  border-radius:10px;
+  font-size:13px;
+  margin-top:10px;
+}
+
+.prova small{
+  color:#16a34a;
+  font-weight:600;
   display:block;
-  margin-top:14px;
-  padding:14px;
+  margin-top:4px;
+}
+
+.btn{
+  display:block;
+  margin-top:16px;
+  padding:15px;
   text-align:center;
-  background:#25D366;
+  background:var(--verde);
   color:#fff;
   text-decoration:none;
-  border-radius:10px;
+  border-radius:12px;
   font-size:16px;
   font-weight:600;
 }
-.btn:hover {
-  background:#1fb357;
+
+.btn:hover{
+  background:var(--verde-escuro);
 }
-.kit {
-  border:2px solid #25D366;
+
+/* Kit destaque */
+.kit{
+  border:2px solid var(--verde);
+  position:relative;
 }
-.prova {
-  font-size:13px;
-  color:#666;
-  background:#f1f1f1;
-  padding:10px;
-  border-radius:8px;
-  margin-top:10px;
+
+.kit::before{
+  content:"MAIS VENDIDO";
+  position:absolute;
+  top:-12px;
+  left:16px;
+  background:var(--verde);
+  color:#fff;
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:20px;
+  font-weight:700;
 }
-footer {
-  background:#111;
-  color:#bbb;
+
+/* Depoimentos */
+.depoimentos h3{
   text-align:center;
-  padding:20px;
+  margin-bottom:16px;
+}
+
+.slide{
+  display:flex;
+  overflow-x:auto;
+  gap:14px;
+  scroll-snap-type:x mandatory;
+}
+
+.depoimento{
+  min-width:85%;
+  background:#fff;
+  padding:14px;
+  border-radius:12px;
+  box-shadow:0 6px 18px rgba(0,0,0,.06);
+  display:flex;
+  gap:12px;
+  align-items:center;
+  scroll-snap-align:start;
+}
+
+.depoimento img{
+  width:52px;
+  height:52px;
+  border-radius:12px;
+  background:#f4f4f4;
+  padding:6px;
+}
+
+.depoimento p{
+  font-size:13px;
+  margin-top:6px;
+}
+
+/* Footer */
+footer{
+  background:#0f0f0f;
+  color:#9ca3af;
+  text-align:center;
+  padding:24px;
   font-size:13px;
 }
-footer span {
+
+footer span{
   display:block;
+  color:#22c55e;
   margin-top:6px;
-  color:#25D366;
+}
+
+/* WhatsApp flutuante */
+.whatsapp-float{
+  position:fixed;
+  bottom:22px;
+  right:22px;
+  width:60px;
+  height:60px;
+  background:var(--verde);
+  color:#fff;
+  border-radius:50%;
+  font-size:26px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  box-shadow:0 10px 25px rgba(0,0,0,.3);
 }
 </style>
 </head>
 
 <body>
 
+<div class="urgencia">
+⏰ Promoção por tempo limitado — acaba em <span id="contador">10:00</span>
+</div>
+
 <header>
   <h1>📦 Produtos Digitais Lucrativos</h1>
-  <p>Soluções simples que vendem todos os dias</p>
+  <p>Soluções simples e testadas para vender todos os dias</p>
 </header>
 
-<div class="container">
+<div class="numeros">
+  <div><strong>+1.200</strong><span>Donos de delivery</span></div>
+  <div><strong>4.9★</strong><span>Avaliação média</span></div>
+  <div><strong>Entrega</strong><span>Imediata</span></div>
+</div>
 
+<div class="container">
+  <div class="produto kit">
+    <h2>🔥 50 Promoções Prontas para Delivery</h2>
+    <p>Promoções testadas que fazem o cliente comprar na hora.</p>
+    <div class="preco">R$ 17,90</div>
+    <a class="btn" href="https://wa.me/5562999193066?text=Quero%2050%20Promoções%20Prontas%20para%20Delivery">Comprar no WhatsApp</a>
+  </div>
   <div class="produto">
     <h2>🍔 Cardápio Lucrativo para Delivery</h2>
     <p>Monte um cardápio que vende mais sem baixar preço.</p>
-    <div class="preco">R$ 19,90
-    <div class="prova">
-  ⭐⭐⭐⭐⭐ Avaliação média dos compradores <br>
-  <small>✔ Compra verificada</small>
-</div></div>
-    <div class="prova">⭐⭐⭐⭐⭐ “Depois que mudei o cardápio, comecei a vender todo dia”</div>
-    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20o%20Cardápio%20Lucrativo%20para%20Delivery">
-      Comprar no WhatsApp
-    </a>
+    <div class="preco">R$ 19,90</div>
+    <div class="prova">⭐⭐⭐⭐⭐ Avaliação média <small>✔ Compra verificada</small></div>
+    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20o%20Cardápio%20Lucrativo%20para%20Delivery">Comprar no WhatsApp</a>
   </div>
 
   <div class="produto">
     <h2>💬 Mensagens Prontas para WhatsApp</h2>
-    <p>Copie, cole e venda todos os dias no WhatsApp.</p>
-    <div class="preco">R$ 14,90<div class="prova">
-  ⭐⭐⭐⭐⭐ Avaliação média dos compradores <br>
-  <small>✔ Compra verificada</small>
-</div></div>
-    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20as%20Mensagens%20Prontas%20para%20WhatsApp">
-      Comprar no WhatsApp
-    </a>
-  </div>
-
-  <div class="produto">
-    <h2>🔥 50 Promoções Prontas para Delivery</h2>
-    <p>Promoções que fazem o cliente comprar agora.</p>
-    <div class="preco">R$ 17,90<div class="prova">
-  ⭐⭐⭐⭐⭐ Avaliação média dos compradores <br>
-  <small>✔ Compra verificada</small>
-</div></div>
-    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20as%2050%20Promoções%20para%20Delivery">
-      Comprar no WhatsApp
-    </a>
-  </div>
-
-  <div class="produto">
-    <h2>📸 Cardápio Digital para Instagram</h2>
-    <p>Templates profissionais editáveis no Canva.</p>
-    <div class="preco">R$ 29,90<div class="prova">
-  ⭐⭐⭐⭐⭐ Avaliação média dos compradores <br>
-  <small>✔ Compra verificada</small>
-</div></div>
-    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20o%20Cardápio%20Digital%20para%20Instagram">
-      Comprar no WhatsApp
-    </a>
+    <p>Copie, cole e feche vendas todos os dias.</p>
+    <div class="preco">R$ 14,90</div>
+    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20as%20Mensagens%20Prontas%20para%20WhatsApp">Comprar no WhatsApp</a>
   </div>
 
   <div class="produto kit">
     <h2>📦 KIT COMPLETO DELIVERY LUCRATIVO</h2>
-    <p>Todos os produtos em um único pacote com desconto.</p>
-    <div class="preco">R$ 49,90<div class="prova">
-  ⭐⭐⭐⭐⭐ Avaliação média dos compradores <br>
-  <small>✔ Compra verificada</small>
-</div></div>
-    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20o%20KIT%20Completo%20Delivery%20Lucrativo">
-      Comprar no WhatsApp
-    </a>
+    <p>Todos os produtos em um único pacote.</p>
+    <div class="preco">R$ 49,90</div>
+    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20o%20KIT%20Completo%20Delivery%20Lucrativo">Comprar no WhatsApp</a>
+  </div>
+
   <div class="depoimentos">
-  <h3>O que dizem quem já comprou</h3>
+    <h3>O que dizem quem já comprou</h3>
+    <div class="slide">
 
-<div class="depoimento">
-  <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
-  <div>
-    <strong>Carlos M.</strong>
-    <small>Bella massa•Go</small><br>
-    <span>⭐️⭐️⭐️⭐️⭐️</span>
-    <p>“Apliquei o cardápio no mesmo dia e já senti diferença nas vendas.”</p>
-  </div>
-  </p>
+      <div class="depoimento">
+        <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
+        <div>
+          <strong>Carlos M.</strong><br>
+          <small>Delivery • SP</small><br>
+          ⭐⭐⭐⭐⭐
+          <p>“Apliquei o cardápio no mesmo dia e já senti diferença nas vendas.”</p>
+        </div>
+      </div>
+
+      <div class="depoimento">
+        <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
+        <div>
+          <strong>Fernanda R.</strong><br>
+          <small>Delivery • GO</small><br>
+          ⭐⭐⭐⭐⭐
+          <p>“Material simples, direto e fácil de aplicar.”</p>
+        </div>
+      </div>
+
+      <div class="depoimento">
+        <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
+        <div>
+          <strong>Rafael T.</strong><br>
+          <small>Delivery • MG</small><br>
+          ⭐⭐⭐⭐⭐
+          <p>“Comprei o kit completo e realmente ajuda quem tem delivery.”</p>
+        </div>
+      </div>
+
     </div>
   </div>
-
-<div class="depoimento">
-  <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
-  <div>
-    <strong>Matheus </strong>
-    <small>Fabbrica di pizza</small><br>
-    <span>⭐⭐⭐⭐⭐</span>
-    <p>“Comprei o kit completo e realmente ajuda quem tem delivery.”</p>
-  <div class="depoimento">
-  <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
-  <div>
-    <strong>Maria.</strong>
-    <small>Sabor Italia</small><br>
-    <span>⭐⭐⭐⭐⭐</span>
-    <p>Me ajudou Bastante super recomendo</p>
-  </div>
-</div>
-  </div>
-</div>
-    </div>
-  </div>
-</div></div>
 
 </div>
 
 <footer>
-  📲 Compra segura • Entrega imediata • Suporte no WhatsApp
+  📲 Compra segura • Entrega imediata • Suporte humano
   <span>WhatsApp: (62) 99919-3066</span>
 </footer>
 
-<a href="https://wa.me/5562999193066"
-   class="whatsapp-float"
-   target="_blank">
-  💬
-</a>
+<a class="whatsapp-float" href="https://wa.me/5562999193066">💬</a>
 
-<style>
-.whatsapp-float {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #25D366;
-  color: white;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  font-size: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  box-shadow: 0 6px 15px rgba(0,0,0,.3);
-  z-index: 999;
-}
-.whatsapp-float:hover {
-  background: #1ebe5d;
-}
-</style></body>
-</html>""
+<script>
+let tempo = 600;
+setInterval(()=>{
+  let m = Math.floor(tempo/60);
+  let s = tempo % 60;
+  document.getElementById("contador").innerText =
+    m + ":" + (s < 10 ? "0" : "") + s;
+  if(tempo>0) tempo--;
+},1000);
+</script>
+
+</body>
+</html>
