@@ -1,332 +1,63 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!doctype html>
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Produtos Digitais Lucrativos</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<style>
-:root{
-  --verde:#25D366;
-  --verde-escuro:#1fa855;
-  --cinza:#6b7280;
-  --fundo:#f4f6f8;
-}
-
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  background:var(--fundo);
-  color:#111;
-}
-
-/* Urgência */
-.urgencia{
-  background:#fff4f4;
-  color:#9b1c1c;
-  text-align:center;
-  padding:12px;
-  font-size:14px;
-  font-weight:600;
-}
-
-/* Header */
-header{
-  background:linear-gradient(180deg,#0f0f0f,#1c1c1c);
-  color:#fff;
-  text-align:center;
-  padding:40px 20px;
-}
-
-header h1{
-  margin:0;
-  font-size:30px;
-}
-
-header p{
-  margin-top:8px;
-  color:#d1d5db;
-}
-
-/* Prova numérica */
-.numeros{
-  display:flex;
-  justify-content:space-around;
-  background:#fff;
-  margin:20px;
-  padding:14px;
-  border-radius:14px;
-  box-shadow:0 6px 18px rgba(0,0,0,.06);
-  text-align:center;
-}
-
-.numeros strong{
-  font-size:18px;
-}
-
-.numeros span{
-  font-size:12px;
-  color:var(--cinza);
-}
-
-/* Conteúdo */
-.container{
-  max-width:720px;
-  margin:auto;
-  padding:22px;
-}
-
-.produto{
-  background:#fff;
-  border-radius:14px;
-  padding:20px;
-  margin-bottom:22px;
-  box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-
-.produto h2{
-  margin:0 0 6px;
-  font-size:21px;
-}
-
-.produto p{
-  margin:0 0 12px;
-  font-size:14px;
-  color:var(--cinza);
-}
-
-.preco{
-  font-size:24px;
-  font-weight:700;
-  color:#0a7c2f;
-}
-
-.prova{
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  padding:12px;
-  border-radius:10px;
-  font-size:13px;
-  margin-top:10px;
-}
-
-.prova small{
-  color:#16a34a;
-  font-weight:600;
-  display:block;
-  margin-top:4px;
-}
-
-.btn{
-  display:block;
-  margin-top:16px;
-  padding:15px;
-  text-align:center;
-  background:var(--verde);
-  color:#fff;
-  text-decoration:none;
-  border-radius:12px;
-  font-size:16px;
-  font-weight:600;
-}
-
-.btn:hover{
-  background:var(--verde-escuro);
-}
-
-/* Kit destaque */
-.kit{
-  border:2px solid var(--verde);
-  position:relative;
-}
-
-.kit::before{
-  content:"MAIS VENDIDO";
-  position:absolute;
-  top:-12px;
-  left:16px;
-  background:var(--verde);
-  color:#fff;
-  font-size:11px;
-  padding:4px 10px;
-  border-radius:20px;
-  font-weight:700;
-}
-
-/* Depoimentos */
-.depoimentos h3{
-  text-align:center;
-  margin-bottom:16px;
-}
-
-.slide{
-  display:flex;
-  overflow-x:auto;
-  gap:14px;
-  scroll-snap-type:x mandatory;
-}
-
-.depoimento{
-  min-width:85%;
-  background:#fff;
-  padding:14px;
-  border-radius:12px;
-  box-shadow:0 6px 18px rgba(0,0,0,.06);
-  display:flex;
-  gap:12px;
-  align-items:center;
-  scroll-snap-align:start;
-}
-
-.depoimento img{
-  width:52px;
-  height:52px;
-  border-radius:12px;
-  background:#f4f4f4;
-  padding:6px;
-}
-
-.depoimento p{
-  font-size:13px;
-  margin-top:6px;
-}
-
-/* Footer */
-footer{
-  background:#0f0f0f;
-  color:#9ca3af;
-  text-align:center;
-  padding:24px;
-  font-size:13px;
-}
-
-footer span{
-  display:block;
-  color:#22c55e;
-  margin-top:6px;
-}
-
-/* WhatsApp flutuante */
-.whatsapp-float{
-  position:fixed;
-  bottom:22px;
-  right:22px;
-  width:60px;
-  height:60px;
-  background:var(--verde);
-  color:#fff;
-  border-radius:50%;
-  font-size:26px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-decoration:none;
-  box-shadow:0 10px 25px rgba(0,0,0,.3);
-}
-</style>
+  <meta charset="utf-8">
+  <title>Bella Massa • Cardápio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-<div class="urgencia">
-⏰ Promoção por tempo limitado — acaba em <span id="contador">10:00</span>
-</div>
-
-<header>
-  <h1>📦 Produtos Digitais Lucrativos</h1>
-  <p>Soluções simples e testadas para vender todos os dias</p>
+<!-- ================= HEADER ================= -->
+<header class="site-header">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+    <div>
+      <h1 id="store-name" style="margin:0;font-size:20px">Bella Massa</h1>
+      <small style="opacity:.9">🍕 Visual premium • Pedidos rápidos</small>
+    </div>
+    <a id="store-phone" href="#" target="_blank" class="btn-ghost">
+      📞 Pedir no WhatsApp
+    </a>
+  </div>
 </header>
 
-<div class="numeros">
-  <div><strong>+1.200</strong><span>Donos de delivery</span></div>
-  <div><strong>4.9★</strong><span>Avaliação média</span></div>
-  <div><strong>Entrega</strong><span>Imediata</span></div>
-</div>
+<!-- ================= CATEGORIAS ================= -->
+<nav id="categories" class="categories" aria-label="Categorias"></nav>
 
-<div class="container">
-  <div class="produto kit">
-    <h2>🔥 50 Promoções Prontas para Delivery</h2>
-    <p>Promoções testadas que fazem o cliente comprar na hora.</p>
-    <div class="preco">R$ 17,90</div>
-    <a class="btn" href="https://wa.me/5562999193066?text=Quero%2050%20Promoções%20Prontas%20para%20Delivery">Comprar no WhatsApp</a>
-  </div>
-  <div class="produto">
-    <h2>🍔 Cardápio Lucrativo para Delivery</h2>
-    <p>Monte um cardápio que vende mais sem baixar preço.</p>
-    <div class="preco">R$ 19,90</div>
-    <div class="prova">⭐⭐⭐⭐⭐ Avaliação média <small>✔ Compra verificada</small></div>
-    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20o%20Cardápio%20Lucrativo%20para%20Delivery">Comprar no WhatsApp</a>
-  </div>
+<!-- ================= PRODUTOS ================= -->
+<main id="products" class="products-grid"></main>
 
-  <div class="produto">
-    <h2>💬 Mensagens Prontas para WhatsApp</h2>
-    <p>Copie, cole e feche vendas todos os dias.</p>
-    <div class="preco">R$ 14,90</div>
-    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20as%20Mensagens%20Prontas%20para%20WhatsApp">Comprar no WhatsApp</a>
-  </div>
+<!-- ================= CARRINHO ================= -->
+<aside id="cart" class="cart hidden" aria-label="Carrinho">
+  <!-- preenchido pelo JS -->
+</aside>
 
-  <div class="produto kit">
-    <h2>📦 KIT COMPLETO DELIVERY LUCRATIVO</h2>
-    <p>Todos os produtos em um único pacote.</p>
-    <div class="preco">R$ 49,90</div>
-    <a class="btn" href="https://wa.me/5562999193066?text=Quero%20o%20KIT%20Completo%20Delivery%20Lucrativo">Comprar no WhatsApp</a>
-  </div>
+<!-- ================= BOTÃO FLUTUANTE ================= -->
+<button id="btn-cart" class="whats-float" aria-label="Ver pedido">
+  🟢 Ver pedido
+</button>
 
-  <div class="depoimentos">
-    <h3>O que dizem quem já comprou</h3>
-    <div class="slide">
+<!-- ================= CONTAINER ÚNICO DE MODAIS ================= -->
+<div id="modal-root"></div>
 
-      <div class="depoimento">
-        <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
-        <div>
-          <strong>Carlos M.</strong><br>
-          <small>Delivery • SP</small><br>
-          ⭐⭐⭐⭐⭐
-          <p>“Apliquei o cardápio no mesmo dia e já senti diferença nas vendas.”</p>
-        </div>
-      </div>
-
-      <div class="depoimento">
-        <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
-        <div>
-          <strong>Fernanda R.</strong><br>
-          <small>Delivery • GO</small><br>
-          ⭐⭐⭐⭐⭐
-          <p>“Material simples, direto e fácil de aplicar.”</p>
-        </div>
-      </div>
-
-      <div class="depoimento">
-        <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
-        <div>
-          <strong>Rafael T.</strong><br>
-          <small>Delivery • MG</small><br>
-          ⭐⭐⭐⭐⭐
-          <p>“Comprei o kit completo e realmente ajuda quem tem delivery.”</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-</div>
-
-<footer>
-  📲 Compra segura • Entrega imediata • Suporte humano
-  <span>WhatsApp: (62) 99919-3066</span>
-</footer>
-
-<a class="whatsapp-float" href="https://wa.me/5562999193066">💬</a>
+<!-- ================= SCRIPTS ================= -->
+<script src="app.js" defer></script>
 
 <script>
-let tempo = 600;
-setInterval(()=>{
-  let m = Math.floor(tempo/60);
-  let s = tempo % 60;
-  document.getElementById("contador").innerText =
-    m + ":" + (s < 10 ? "0" : "") + s;
-  if(tempo>0) tempo--;
-},1000);
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.app && typeof window.app.renderPublic === "function") {
+      window.app.renderPublic();
+    }
+
+    // Controle único do carrinho (SEM conflito)
+    const btnCart = document.getElementById("btn-cart");
+    const cart = document.getElementById("cart");
+
+    btnCart.addEventListener("click", () => {
+      cart.classList.toggle("hidden");
+    });
+  });
 </script>
 
 </body>

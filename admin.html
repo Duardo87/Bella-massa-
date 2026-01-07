@@ -1,107 +1,219 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin — Sua Pizzaria</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <header class="site-header">
-    <div class="brand">
-      <h1>Admin — Sua Pizzaria</h1>
-    </div>
-    <nav class="header-actions">
-      <a href="index.html" class="btn">Ver Site</a>
-    </nav>
-  </header>
+<script>
+/* ================= CONFIG ================= */
+const KEY = "pizzaria-data";
 
-  <main class="container admin-container">
-    <div id="login-panel" class="card">
-      <h2>Login</h2>
-      <label>
-        Email
-        <input id="login-email" type="email" value="admin@pizzaria.local" />
-      </label>
-      <label>
-        Senha
-        <input id="login-pass" type="password" value="admin123" />
-      </label>
-      <div>
-        <button id="btn-login" class="btn">Entrar</button>
-      </div>
-      <small>Credenciais de exemplo acima. Altere no código se quiser.</small>
-    </div>
+const DEFAULT_DATA = {
+  store: { name: "", phone: "" },
+  categories: [],
+  products: [],
+  extras: [],
+  promo: null,
+  theme: "auto"
+};
 
-    <div id="admin-panel" class="hidden">
-      <section class="card">
-        <h2>Dados da Pizzaria</h2>
-        <label>
-          Nome da loja
-          <input id="admin-name" />
-        </label>
-        <label>
-          Telefone (tel)
-          <input id="admin-phone" />
-        </label>
-        <div>
-          <button id="save-store" class="btn">Salvar</button>
-        </div>
-      </section>
+/* ================= STORAGE SEGURO ================= */
+function loadDB() {
+  const raw = JSON.parse(localStorage.getItem(KEY)) || {};
+  return {
+    ...DEFAULT_DATA,
+    ...raw,
+    store: { ...DEFAULT_DATA.store, ...(raw.store || {}) },
+    categories: Array.isArray(raw.categories) ? raw.categories : [],
+    products: Array.isArray(raw.products) ? raw.products : [],
+    extras: Array.isArray(raw.extras) ? raw.extras : [],
+    promo: raw.promo || null
+  };
+}
 
-      <section class="card">
-        <h2>Categorias</h2>
-        <div id="categories-admin"></div>
-        <div class="form-inline">
-          <input id="new-category-name" placeholder="Nova categoria" />
-          <button id="add-category" class="btn">Adicionar</button>
-        </div>
-      </section>
+function saveDB(data) {
+  localStorage.setItem(KEY, JSON.stringify(data));
+}
 
-      <section class="card">
-        <h2>Produtos</h2>
-        <div id="products-admin"></div>
-        <button id="add-product-btn" class="btn">Adicionar Produto</button>
-      </section>
+/* ================= LOGIN ================= */
+const loginDiv = document.getElementById("login");
+const adminDiv = document.getElementById("admin");
 
-      <section class="card">
-        <h2>Feedbacks</h2>
-        <div id="feedbacks-admin"></div>
-        <div class="form-inline">
-          <input id="new-feedback-name" placeholder="Nome cliente" />
-          <input id="new-feedback-text" placeholder="Comentário" />
-          <button id="add-feedback" class="btn">Adicionar feedback</button>
-        </div>
-      </section>
+function login() {
+  loginDiv.classList.add("hidden");
+  adminDiv.classList.remove("hidden");
+  loadAdmin();
+}
 
-      <section class="card">
-        <h2>Importar / Exportar</h2>
-        <div class="form-inline">
-          <button id="export-json" class="btn">Exportar JSON</button>
-          <input id="import-file" type="file" accept="application/json" />
-        </div>
-      </section>
+function logout() {
+  location.reload();
+}
 
-      <div style="text-align:right; margin-top:12px;">
-        <button id="btn-logout" class="btn ghost">Sair</button>
-      </div>
-    </div>
-  </main>
+/* ================= LOAD ================= */
+function loadAdmin() {
+  const d = loadDB();
+  storeName.value = d.store.name;
+  storePhone.value = d.store.phone;
+  renderCategories();
+  renderProducts();
+  renderExtras();
+}
 
-  <!-- modal produto edição -->
-  <div id="product-edit-modal" class="modal hidden">
-    <div class="modal-content">
-      <button class="modal-close" id="edit-modal-close">&times;</button>
-      <div class="product-edit-body" id="product-edit-body"></div>
-    </div>
-  </div>
+/* ================= STORE ================= */
+function saveStore() {
+  const d = loadDB();
+  d.store.name = storeName.value.trim();
+  d.store.phone = storePhone.value.trim();
+  saveDB(d);
+  alert("Dados da loja salvos");
+}
 
-  <script src="app.js"></script>
-  <script>
-    // inicializa comportamentos admin
-    document.addEventListener('DOMContentLoaded', () => {
-      window.app.initAdmin();
+/* ================= CATEGORIAS ================= */
+function addCategory() {
+  if (!catName.value.trim()) return alert("Digite a categoria");
+
+  const d = loadDB();
+  if (!d.categories.includes(catName.value.trim())) {
+    d.categories.push(catName.value.trim());
+    saveDB(d);
+  }
+  catName.value = "";
+  renderCategories();
+}
+
+function renderCategories() {
+  const d = loadDB();
+  catList.innerHTML = "";
+  prodCat.innerHTML = "";
+
+  d.categories.forEach(cat => {
+    catList.innerHTML += `<p>${cat}</p>`;
+    prodCat.innerHTML += `<option value="${cat}">${cat}</option>`;
+  });
+}
+
+/* ================= PRODUTOS ================= */
+function addProduct() {
+  if (
+    !prodName.value ||
+    !prodPrice.value ||
+    !prodCat.value ||
+    !prodImage.files[0]
+  ) return alert("Preencha todos os campos");
+
+  const d = loadDB();
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    d.products.push({
+      id: Date.now(),
+      name: prodName.value.trim(),
+      desc: prodDesc.value.trim(),
+      price: Number(prodPrice.value),
+      category: prodCat.value,
+      image: reader.result,
+      best: prodBest.checked
     });
-  </script>
-</body>
-</html>
+
+    saveDB(d);
+    renderProducts();
+    alert("Produto adicionado com sucesso");
+  };
+
+  reader.readAsDataURL(prodImage.files[0]);
+}
+
+function renderProducts() {
+  const d = loadDB();
+  productList.innerHTML = "";
+
+  d.products.forEach(p => {
+    productList.innerHTML += `
+      <p>${p.name} — R$ ${p.price.toFixed(2)}</p>
+    `;
+  });
+}
+
+/* ================= ADICIONAIS ================= */
+function addExtra() {
+  if (!extraName.value || !extraPrice.value)
+    return alert("Preencha o adicional");
+
+  const d = loadDB();
+  d.extras.push({
+    id: Date.now(),
+    name: extraName.value.trim(),
+    price: Number(extraPrice.value),
+    active: true
+  });
+
+  saveDB(d);
+  extraName.value = "";
+  extraPrice.value = "";
+  renderExtras();
+}
+
+function renderExtras() {
+  const d = loadDB();
+  extraList.innerHTML = "";
+
+  d.extras.forEach(e => {
+    extraList.innerHTML += `
+      <div class="extra-item">
+        <strong>${e.name}</strong>
+        <label>
+          <input type="checkbox" ${e.active ? "checked" : ""}
+            onchange="toggleExtra(${e.id}, this.checked)">
+          Ativo
+        </label>
+      </div>
+    `;
+  });
+}
+
+function toggleExtra(id, active) {
+  const d = loadDB();
+  const extra = d.extras.find(e => e.id === id);
+  if (extra) {
+    extra.active = active;
+    saveDB(d);
+  }
+}
+
+/* ================= PROMO ================= */
+function savePromo() {
+  if (!promoDesc.value || !promoPrice.value || !promoImage.files[0])
+    return alert("Preencha a promoção");
+
+  const d = loadDB();
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    d.promo = {
+      active: true,
+      description: promoDesc.value.trim(),
+      price: Number(promoPrice.value),
+      image: reader.result
+    };
+    saveDB(d);
+    alert("Promoção salva");
+  };
+
+  reader.readAsDataURL(promoImage.files[0]);
+}
+
+/* ================= BACKUP ================= */
+function exportJSON() {
+  const blob = new Blob(
+    [JSON.stringify(loadDB(), null, 2)],
+    { type: "application/json" }
+  );
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "backup-bella-massa.json";
+  a.click();
+}
+
+function importJSON() {
+  const reader = new FileReader();
+  reader.onload = () => {
+    localStorage.setItem(KEY, reader.result);
+    location.reload();
+  };
+  reader.readAsText(importFile.files[0]);
+}
+</script>
