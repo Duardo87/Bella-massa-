@@ -1,64 +1,68 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <title>Bella Massa • Cardápio</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta charset="UTF-8">
+  <title>Bella Massa Pizzaria</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
 
-<!-- ================= HEADER ================= -->
-<header class="site-header">
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-    <div>
-      <h1 id="store-name" style="margin:0;font-size:20px">Bella Massa</h1>
-      <small style="opacity:.9">🍕 Visual premium • Pedidos rápidos</small>
-    </div>
-    <a id="store-phone" href="#" target="_blank" class="btn-ghost">
-      📞 Pedir no WhatsApp
-    </a>
-  </div>
+<header class="header">
+  <h1 id="storeName">Bella Massa</h1>
+  <a id="storePhone" target="_blank">WhatsApp</a>
 </header>
 
-<!-- ================= CATEGORIAS ================= -->
-<nav id="categories" class="categories" aria-label="Categorias"></nav>
+<!-- PROMOÇÃO DO DIA -->
+<section id="promoBanner" class="promo hidden">
+  <h2 id="promoTitle"></h2>
+  <p id="promoDesc"></p>
+  <strong id="promoPrice"></strong>
+  <button id="promoBtn">🔥 Pedir promoção</button>
+</section>
 
-<!-- ================= PRODUTOS ================= -->
-<main id="products" class="products-grid"></main>
+<nav id="categories" class="categories"></nav>
+<main id="products" class="products"></main>
 
-<!-- ================= CARRINHO ================= -->
-<aside id="cart" class="cart hidden" aria-label="Carrinho">
-  <!-- preenchido pelo JS -->
+<button id="btnCart" class="btn-cart">🛒 Ver pedido</button>
+
+<aside id="cartBox" class="cart hidden">
+  <h3>Pedido</h3>
+  <div id="cartItems"></div>
+
+  <label>🏠 Endereço de entrega</label>
+  <textarea id="address" placeholder="Rua, número, bairro"></textarea>
+
+  <label>💳 Forma de pagamento</label>
+  <select id="payment">
+    <option value="">Selecione</option>
+    <option>Dinheiro</option>
+    <option>Pix</option>
+    <option>Cartão</option>
+  </select>
+
+  <label>💬 Observação</label>
+  <textarea id="obs" placeholder="Ex: sem cebola, troco para 100"></textarea>
+
+  <strong id="cartTotal"></strong>
+  <button onclick="sendWhats()">Enviar WhatsApp</button>
 </aside>
 
-<!-- ================= BOTÃO FLUTUANTE ================= -->
-<button id="btn-cart" class="whats-float" aria-label="Ver pedido">
-  🟢 Ver pedido
-</button>
+<!-- MODAL ETAPAS (produtos normais) -->
+<div id="modal" class="modal hidden">
+  <div class="modal-content">
+    <h3 id="stepTitle"></h3>
+    <div id="stepContent"></div>
 
-<!-- ================= CONTAINER ÚNICO DE MODAIS ================= -->
-<div id="modal-root"></div>
+    <div class="step-actions">
+      <button id="prevStep">Voltar</button>
+      <button id="nextStep">Continuar</button>
+    </div>
+  </div>
+</div>
 
-<!-- ================= SCRIPTS ================= -->
-<script src="app.js" defer></script>
+<a id="whatsFloat" class="whats-float" target="_blank">💬 Pedir no WhatsApp</a>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    if (window.app && typeof window.app.renderPublic === "function") {
-      window.app.renderPublic();
-    }
-
-    // Controle único do carrinho (SEM conflito)
-    const btnCart = document.getElementById("btn-cart");
-    const cart = document.getElementById("cart");
-
-    btnCart.addEventListener("click", () => {
-      cart.classList.toggle("hidden");
-    });
-  });
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>

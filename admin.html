@@ -1,219 +1,79 @@
-<script>
-/* ================= CONFIG ================= */
-const KEY = "pizzaria-data";
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin • Cardápio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
 
-const DEFAULT_DATA = {
-  store: { name: "", phone: "" },
-  categories: [],
-  products: [],
-  extras: [],
-  promo: null,
-  theme: "auto"
-};
+<!-- LOGIN -->
+<div id="loginBox">
+  <h2>Login Admin</h2>
+  <input id="loginUser" placeholder="Usuário">
+  <input id="loginPass" type="password" placeholder="Senha">
+  <button onclick="loginAdmin()">Entrar</button>
+</div>
 
-/* ================= STORAGE SEGURO ================= */
-function loadDB() {
-  const raw = JSON.parse(localStorage.getItem(KEY)) || {};
-  return {
-    ...DEFAULT_DATA,
-    ...raw,
-    store: { ...DEFAULT_DATA.store, ...(raw.store || {}) },
-    categories: Array.isArray(raw.categories) ? raw.categories : [],
-    products: Array.isArray(raw.products) ? raw.products : [],
-    extras: Array.isArray(raw.extras) ? raw.extras : [],
-    promo: raw.promo || null
-  };
-}
+<!-- ADMIN -->
+<div id="admin" class="hidden">
 
-function saveDB(data) {
-  localStorage.setItem(KEY, JSON.stringify(data));
-}
+  <h2>🏪 Dados da Loja</h2>
+  <input id="storeName" placeholder="Nome da loja">
+  <input id="storePhone" placeholder="WhatsApp">
+  <input id="openTime" type="time">
+  <input id="closeTime" type="time">
+  <button onclick="saveStore()">Salvar loja</button>
 
-/* ================= LOGIN ================= */
-const loginDiv = document.getElementById("login");
-const adminDiv = document.getElementById("admin");
+  <hr>
 
-function login() {
-  loginDiv.classList.add("hidden");
-  adminDiv.classList.remove("hidden");
-  loadAdmin();
-}
+  <h2>📂 Categorias</h2>
+  <input id="catName" placeholder="Nova categoria">
+  <button onclick="addCategory()">Adicionar</button>
+  <div id="catList"></div>
 
-function logout() {
-  location.reload();
-}
+  <hr>
 
-/* ================= LOAD ================= */
-function loadAdmin() {
-  const d = loadDB();
-  storeName.value = d.store.name;
-  storePhone.value = d.store.phone;
-  renderCategories();
-  renderProducts();
-  renderExtras();
-}
+  <h2>🍕 Produtos</h2>
+  <input id="prodName" placeholder="Nome do produto">
+  <input id="prodDesc" placeholder="Descrição">
+  <select id="prodCat"></select>
 
-/* ================= STORE ================= */
-function saveStore() {
-  const d = loadDB();
-  d.store.name = storeName.value.trim();
-  d.store.phone = storePhone.value.trim();
-  saveDB(d);
-  alert("Dados da loja salvos");
-}
+  <input id="priceP" placeholder="Preço P">
+  <input id="priceM" placeholder="Preço M">
+  <input id="priceG" placeholder="Preço G">
 
-/* ================= CATEGORIAS ================= */
-function addCategory() {
-  if (!catName.value.trim()) return alert("Digite a categoria");
+  <input id="prodFlavors" placeholder="Máx sabores">
+  <input id="prodImage" type="file" accept="image/*">
 
-  const d = loadDB();
-  if (!d.categories.includes(catName.value.trim())) {
-    d.categories.push(catName.value.trim());
-    saveDB(d);
-  }
-  catName.value = "";
-  renderCategories();
-}
+  <button onclick="addProduct()">Adicionar produto</button>
+  <div id="productList"></div>
 
-function renderCategories() {
-  const d = loadDB();
-  catList.innerHTML = "";
-  prodCat.innerHTML = "";
+  <hr>
 
-  d.categories.forEach(cat => {
-    catList.innerHTML += `<p>${cat}</p>`;
-    prodCat.innerHTML += `<option value="${cat}">${cat}</option>`;
-  });
-}
+  <h2>➕ Adicionais</h2>
+  <input id="extraName" placeholder="Nome">
+  <input id="extraPrice" placeholder="Preço">
+  <button onclick="addExtra()">Adicionar</button>
+  <div id="extraList"></div>
 
-/* ================= PRODUTOS ================= */
-function addProduct() {
-  if (
-    !prodName.value ||
-    !prodPrice.value ||
-    !prodCat.value ||
-    !prodImage.files[0]
-  ) return alert("Preencha todos os campos");
+  <hr>
 
-  const d = loadDB();
-  const reader = new FileReader();
+  <h2>🥖 Bordas</h2>
+  <input id="borderName" placeholder="Nome">
+  <input id="borderPrice" placeholder="Preço">
+  <button onclick="addBorder()">Adicionar</button>
+  <div id="borderList"></div>
 
-  reader.onload = () => {
-    d.products.push({
-      id: Date.now(),
-      name: prodName.value.trim(),
-      desc: prodDesc.value.trim(),
-      price: Number(prodPrice.value),
-      category: prodCat.value,
-      image: reader.result,
-      best: prodBest.checked
-    });
+  <hr>
+<h2>🔥 Promoção por Dia da Semana</h2>
+<div id="promoWeek"></div>
+  <hr>
 
-    saveDB(d);
-    renderProducts();
-    alert("Produto adicionado com sucesso");
-  };
+  <button onclick="exportAppJSON()">⬇ Exportar app.json</button>
 
-  reader.readAsDataURL(prodImage.files[0]);
-}
+</div>
 
-function renderProducts() {
-  const d = loadDB();
-  productList.innerHTML = "";
-
-  d.products.forEach(p => {
-    productList.innerHTML += `
-      <p>${p.name} — R$ ${p.price.toFixed(2)}</p>
-    `;
-  });
-}
-
-/* ================= ADICIONAIS ================= */
-function addExtra() {
-  if (!extraName.value || !extraPrice.value)
-    return alert("Preencha o adicional");
-
-  const d = loadDB();
-  d.extras.push({
-    id: Date.now(),
-    name: extraName.value.trim(),
-    price: Number(extraPrice.value),
-    active: true
-  });
-
-  saveDB(d);
-  extraName.value = "";
-  extraPrice.value = "";
-  renderExtras();
-}
-
-function renderExtras() {
-  const d = loadDB();
-  extraList.innerHTML = "";
-
-  d.extras.forEach(e => {
-    extraList.innerHTML += `
-      <div class="extra-item">
-        <strong>${e.name}</strong>
-        <label>
-          <input type="checkbox" ${e.active ? "checked" : ""}
-            onchange="toggleExtra(${e.id}, this.checked)">
-          Ativo
-        </label>
-      </div>
-    `;
-  });
-}
-
-function toggleExtra(id, active) {
-  const d = loadDB();
-  const extra = d.extras.find(e => e.id === id);
-  if (extra) {
-    extra.active = active;
-    saveDB(d);
-  }
-}
-
-/* ================= PROMO ================= */
-function savePromo() {
-  if (!promoDesc.value || !promoPrice.value || !promoImage.files[0])
-    return alert("Preencha a promoção");
-
-  const d = loadDB();
-  const reader = new FileReader();
-
-  reader.onload = () => {
-    d.promo = {
-      active: true,
-      description: promoDesc.value.trim(),
-      price: Number(promoPrice.value),
-      image: reader.result
-    };
-    saveDB(d);
-    alert("Promoção salva");
-  };
-
-  reader.readAsDataURL(promoImage.files[0]);
-}
-
-/* ================= BACKUP ================= */
-function exportJSON() {
-  const blob = new Blob(
-    [JSON.stringify(loadDB(), null, 2)],
-    { type: "application/json" }
-  );
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "backup-bella-massa.json";
-  a.click();
-}
-
-function importJSON() {
-  const reader = new FileReader();
-  reader.onload = () => {
-    localStorage.setItem(KEY, reader.result);
-    location.reload();
-  };
-  reader.readAsText(importFile.files[0]);
-}
-</script>
+<script src="admin.js"></script>
+</body>
+</html>

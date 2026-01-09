@@ -1,316 +1,189 @@
-// ==================================================
-// CONFIG / STORAGE
-// ==================================================
-const STORAGE_KEY = "pizzaria-data";
+let data=null, cart=[], currentProduct=null;
+let step=1, sel={size:null,flavors:[],border:null,extras:[]};
+const $=id=>document.getElementById(id);
 
-const DEFAULT_DATA = {
-  store: { name: "Bella Massa", phone: "" },
-  products: [],
-  extras: [],
-  promo: null,
-  theme: "auto"
-};
-
-function loadData() {
-  const raw = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-  return {
-    ...DEFAULT_DATA,
-    ...raw,
-    store: { ...DEFAULT_DATA.store, ...(raw.store || {}) },
-    products: Array.isArray(raw.products) ? raw.products : [],
-    extras: Array.isArray(raw.extras) ? raw.extras : [],
-    promo: raw.promo || null
-  };
+async function loadData(){
+  const r=await fetch("./app.json?v="+Date.now());
+  return r.json();
 }
 
-let data = loadData();
-let cart = [];
-let selectedProduct = null;
-
-// ==================================================
-// INIT
-// ==================================================
-function renderPublic() {
-  data = loadData();
-  applyTheme();
-  renderHeader();
+document.addEventListener("DOMContentLoaded",async()=>{
+  data=await loadData();
+  loadPromo(); // ✅ agora data já existe
+  $("storePhone").href=`https://wa.me/${data.store.phone}`;
+  $("whatsFloat").href=`https://wa.me/${data.store.phone}`;
+  $("btnCart").onclick=()=>toggleCart();
   renderCategories();
-  renderPromo();
-}
-
-window.app = { renderPublic };
-
-// ==================================================
-// HEADER
-// ==================================================
-function renderHeader() {
-  const nameEl = document.getElementById("store-name");
-  const phoneEl = document.getElementById("store-phone");
-
-  if (nameEl) nameEl.textContent = data.store.name || "";
-  if (phoneEl && data.store.phone) {
-    phoneEl.href = "https://wa.me/" + data.store.phone;
-  }
-}
-
-// ==================================================
-// THEME
-// ==================================================
-function applyTheme() {
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const theme =
-    data.theme === "auto" ? (prefersDark ? "dark" : "light") : data.theme;
-  document.body.classList.toggle("dark", theme === "dark");
-}
-
-// ==================================================
-// CATEGORIAS
-// ==================================================
-function renderCategories() {
-  const nav = document.getElementById("categories");
-  if (!nav) return;
-
-  const cats = [...new Set(
-    data.products.map(p => p.category).filter(Boolean)
-  )];
-
-  nav.innerHTML = "";
-  if (!cats.length) return;
-
-  cats.forEach((cat, i) => {
-    nav.insertAdjacentHTML("beforeend", `
-      <button data-action="category" data-category="${cat}"
-        class="${i === 0 ? "active" : ""}">
-        ${cat}
-      </button>
-    `);
-  });
-
-  renderProducts(cats[0]);
-}
-
-// ==================================================
-// PRODUTOS
-// ==================================================
-function renderProducts(category) {
-  const grid = document.getElementById("products");
-  if (!grid) return;
-
-  grid.innerHTML = "";
-
-  data.products
-    .filter(p => p.category === category)
-    .forEach(p => {
-      grid.insertAdjacentHTML("beforeend", `
-        <div class="product-card">
-          ${p.best ? `<span class="badge">⭐ Mais pedido</span>` : ""}
-          ${p.image ? `<img src="${p.image}" alt="${p.name}">` : ""}
-          <h3>${p.name}</h3>
-          <p>${p.desc || ""}</p>
-          <div class="price">R$ ${p.price.toFixed(2)}</div>
-          <button class="btn btn-green"
-            data-action="add-product"
-            data-id="${p.id}">
-            Adicionar
-          </button>
-        </div>
-      `);
-    });
-}
-
-// ==================================================
-// EVENT DELEGATION GLOBAL (🔥 IOS FIX)
-// ==================================================
-document.addEventListener("click", e => {
-  const btn = e.target.closest("[data-action]");
-  if (!btn) return;
-
-  const action = btn.dataset.action;
-
-  if (action === "category") {
-    document
-      .querySelectorAll(".categories button")
-      .forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    renderProducts(btn.dataset.category);
-  }
-
-  if (action === "add-product") {
-    openExtras(Number(btn.dataset.id));
-  }
-
-  if (action === "confirm-extras") confirmExtras();
-  if (action === "close-modal") closeAnyModal();
-
-  if (action === "accept-promo") acceptPromo();
-  if (action === "close-promo") closePromo();
-
-  if (action === "send-whats") sendToWhatsApp();
 });
 
-// ==================================================
-// ADICIONAIS
-// ==================================================
-function openExtras(id) {
-  selectedProduct = data.products.find(p => p.id === id);
-  if (!selectedProduct) return;
-
-  closeAnyModal();
-
-  const extras = data.extras.filter(e => e.active);
-
-  const modal = document.createElement("div");
-  modal.className = "promo-overlay";
-
-  modal.innerHTML = `
-    <div class="promo-card">
-      <h3>➕ Adicionais</h3>
-
-      ${
-        extras.length
-          ? extras.map(e => `
-            <label class="extra-item">
-              <input type="checkbox" value="${e.id}">
-              <span>${e.name}</span>
-              <strong>R$ ${e.price.toFixed(2)}</strong>
-            </label>
-          `).join("")
-          : `<p style="opacity:.6">Nenhum adicional disponível</p>`
-      }
-
-      <button class="btn btn-green" data-action="confirm-extras">
-        Adicionar ao pedido
-      </button>
-      <button class="btn btn-ghost" data-action="close-modal">
-        Cancelar
-      </button>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
+function renderCategories(){
+  const c=data.categories.filter(x=>x.active).sort((a,b)=>a.order-b.order);
+  $("categories").innerHTML="";
+  c.forEach((cat,i)=>{
+    $("categories").innerHTML+=
+      `<button class="${i===0?'active':''}" onclick="renderProducts(${cat.id},this)">${cat.name}</button>`;
+  });
+  if(c.length) renderProducts(c[0].id);
 }
 
-function confirmExtras() {
-  if (!selectedProduct) return;
+function renderProducts(id,btn){
+  document.querySelectorAll(".categories button").forEach(b=>b.classList.remove("active"));
+  if(btn) btn.classList.add("active");
+  $("products").innerHTML="";
+  data.products.filter(p=>p.active&&p.categoryId===id).forEach(p=>{
+    $("products").innerHTML+=`
+      <div class="product-card">
+        <h3>${p.name}</h3>
+        <p>${p.desc||""}</p>
+        <button onclick="startOrder(${p.id})">Escolher</button>
+      </div>`;
+  });
+}
 
-  cart.push({ ...selectedProduct });
+/* ===== MODAL ETAPAS ===== */
+function startOrder(id){
+  currentProduct=data.products.find(p=>p.id===id);
+  step=1; sel={size:null,flavors:[],border:null,extras:[]};
+  $("modal").classList.remove("hidden");
+  renderStep();
+}
 
-  document
-    .querySelectorAll(".promo-card input:checked")
-    .forEach(chk => {
-      const extra = data.extras.find(e => e.id == chk.value);
-      if (extra) cart.push({ ...extra });
+$("prevStep").onclick=()=>{ if(step>1){step--;renderStep();}};
+$("nextStep").onclick=()=>nextStep();
+
+function renderStep(){
+  if(step===1) sizeStep();
+  if(step===2) flavorStep();
+  if(step===3) borderStep();
+  if(step===4) extraStep();
+}
+
+function sizeStep(){
+  $("stepTitle").textContent="📏 Tamanho";
+  let h="";
+  Object.entries(currentProduct.prices).forEach(([k,v])=>{
+    h+=`<label><input type="radio" name="size" value="${k}" data-price="${v}"> ${k} - R$ ${v}</label><br>`;
+  });
+  $("stepContent").innerHTML=h;
+}
+
+function flavorStep(){
+  if(!currentProduct.maxFlavors||currentProduct.maxFlavors===1){
+    step++; renderStep(); return;
+  }
+  $("stepTitle").textContent=`🍕 Escolha até ${currentProduct.maxFlavors} sabores`;
+  let h="";
+  data.products.filter(p=>p.categoryId===currentProduct.categoryId&&p.prices)
+    .forEach(p=>{
+      h+=`<label><input type="checkbox" value="${p.name}" data-prices='${JSON.stringify(p.prices)}'> ${p.name}</label><br>`;
     });
-
-  selectedProduct = null;
-  closeAnyModal();
-  renderCart();
+  $("stepContent").innerHTML=h;
 }
 
-// ==================================================
-// PROMOÇÃO DO DIA
-// ==================================================
-function renderPromo() {
-  if (!data.promo || !data.promo.active || typeof data.promo.price !== "number")
-    return;
-
-  const key = "promoClosed-" + new Date().toISOString().slice(0, 10);
-  if (localStorage.getItem(key)) return;
-
-  closeAnyModal();
-
-  const modal = document.createElement("div");
-  modal.className = "promo-overlay";
-
-  modal.innerHTML = `
-    <div class="promo-card">
-      ${data.promo.image ? `<img src="${data.promo.image}">` : ""}
-      <h2>🔥 Promoção do Dia</h2>
-      <p>${data.promo.description || ""}</p>
-      <strong>R$ ${data.promo.price.toFixed(2)}</strong>
-
-      <button class="btn btn-green" data-action="accept-promo">
-        Aproveitar
-      </button>
-      <button class="btn btn-ghost" data-action="close-promo">
-        Depois
-      </button>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-}
-
-function closePromo() {
-  const key = "promoClosed-" + new Date().toISOString().slice(0, 10);
-  localStorage.setItem(key, "1");
-  closeAnyModal();
-}
-
-function acceptPromo() {
-  cart.push({
-    name: data.promo.description || "Promoção do Dia",
-    price: data.promo.price
+function borderStep(){
+  $("stepTitle").textContent="🥖 Borda (opcional)";
+  let h="";
+  (data.borders||[]).filter(b=>b.active).forEach(b=>{
+    h+=`<label><input type="radio" name="border" value="${b.name}" data-price="${b.price}"> ${b.name} (+R$ ${b.price})</label><br>`;
   });
-  closePromo();
-  renderCart();
+  $("stepContent").innerHTML=h;
 }
 
-// ==================================================
-// CARRINHO
-// ==================================================
-function renderCart() {
-  const div = document.getElementById("cart");
-  if (!div) return;
-
-  div.classList.remove("hidden");
-
-  let total = 0;
-  let html = "<h3>🧾 Seu pedido</h3>";
-
-  cart.forEach(i => {
-    total += i.price;
-    html += `<p>${i.name} — R$ ${i.price.toFixed(2)}</p>`;
+function extraStep(){
+  $("stepTitle").textContent="➕ Adicionais";
+  let h="";
+  (data.extras||[]).filter(e=>e.active).forEach(e=>{
+    h+=`<label><input type="checkbox" value="${e.name}" data-price="${e.price}"> ${e.name} (+R$ ${e.price})</label><br>`;
   });
-
-  html += `
-    <strong>Total: R$ ${total.toFixed(2)}</strong>
-    <button class="btn btn-green" data-action="send-whats">
-      Enviar no WhatsApp
-    </button>
-  `;
-
-  div.innerHTML = html;
+  $("stepContent").innerHTML=h;
+  $("nextStep").textContent="Adicionar ao carrinho";
 }
 
-// ==================================================
-// WHATSAPP
-// ==================================================
-function sendToWhatsApp() {
-  if (!data.store.phone) {
-    alert("WhatsApp não configurado no admin");
-    return;
+function nextStep(){
+  if(step===1){
+    const s=document.querySelector("input[name=size]:checked");
+    if(!s){alert("Escolha o tamanho");return;}
+    sel.size=s;
+  }
+  if(step===2 && currentProduct.maxFlavors>1){
+    const f=[...$("stepContent").querySelectorAll("input:checked")];
+    if(!f.length){alert("Escolha ao menos 1 sabor");return;}
+    if(f.length>currentProduct.maxFlavors){alert("Máx sabores atingido");return;}
+    sel.flavors=f;
+  }
+  if(step===3) sel.border=document.querySelector("input[name=border]:checked");
+  if(step===4){ sel.extras=[...$("stepContent").querySelectorAll("input:checked")]; finalize(); return;}
+  step++; renderStep();
+}
+
+function finalize(){
+  let total=Number(sel.size.dataset.price);
+  let desc=`${currentProduct.name} (${sel.size.value})`;
+
+  if(sel.flavors.length){
+    let max=0;
+    sel.flavors.forEach(f=>{
+      const p=JSON.parse(f.dataset.prices)[sel.size.value]||0;
+      max=Math.max(max,p);
+    });
+    total=max;
+    desc+=" – "+sel.flavors.map(f=>f.value).join(" + ");
   }
 
-  let msg = `Pedido - ${data.store.name}%0A%0A`;
-  let total = 0;
+  if(sel.border){ total+=Number(sel.border.dataset.price); desc+=" + Borda "+sel.border.value; }
+  sel.extras.forEach(e=>{ total+=Number(e.dataset.price); desc+=" + "+e.value; });
 
-  cart.forEach(i => {
-    total += i.price;
-    msg += `• ${i.name} R$ ${i.price.toFixed(2)}%0A`;
-  });
-
-  msg += `%0ATotal: R$ ${total.toFixed(2)}`;
-
-  window.open(
-    `https://wa.me/${data.store.phone}?text=${msg}`,
-    "_blank"
-  );
+  cart.push({desc,total});
+  $("modal").classList.add("hidden");
+  $("nextStep").textContent="Continuar";
+  renderCart();
 }
 
-// ==================================================
-// UTIL
-// ==================================================
-function closeAnyModal() {
-  document.querySelectorAll(".promo-overlay").forEach(m => m.remove());
+/* ===== CARRINHO ===== */
+function renderCart(){
+  let h="", t=0;
+  cart.forEach((i,idx)=>{
+    t+=i.total;
+    h+=`<p>${i.desc} - R$ ${i.total.toFixed(2)}
+      <button onclick="cart.splice(${idx},1);renderCart()">❌</button></p>`;
+  });
+  $("cartItems").innerHTML=h;
+  $("cartTotal").textContent="Total: R$ "+t.toFixed(2);
+  $("cartBox").classList.remove("hidden");
+}
+
+function toggleCart(){ $("cartBox").classList.toggle("hidden"); }
+
+function sendWhats(){
+  if(!cart.length){alert("Carrinho vazio");return;}
+  const addr=$("address").value.trim();
+  const pay=$("payment").value;
+  if(!addr||!pay){alert("Preencha endereço e pagamento");return;}
+
+  let msg="🧾 *Pedido Bella Massa*%0A";
+  let t=0;
+  cart.forEach(i=>{ t+=i.total; msg+=`• ${i.desc} — R$ ${i.total.toFixed(2)}%0A`; });
+  msg+=`%0A*Total:* R$ ${t.toFixed(2)}%0A🏠 ${addr}%0A💳 ${pay}`;
+  if($("obs").value) msg+=`%0A💬 ${$("obs").value}`;
+
+  window.open(`https://wa.me/${data.store.phone}?text=${msg}`);
+}function loadPromo(){
+  if(!data.promo || !data.promo.active) return;
+
+  const today = new Date().getDay();
+  const promo = data.promo.days?.[today];
+  if(!promo) return;
+
+  $("promoTitle").textContent = promo.title;
+  $("promoDesc").textContent = promo.desc;
+  $("promoPrice").textContent = "R$ " + promo.price.toFixed(2);
+  $("promoBanner").classList.remove("hidden");
+
+  $("promoBtn").onclick = () => {
+    cart.push({
+      desc: promo.title + " – " + promo.desc,
+      total: promo.price
+    });
+    renderCart();
+  };
 }
