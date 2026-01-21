@@ -1,79 +1,206 @@
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:#f4f4f4}
-
-.header{
-  background:#b11212;color:#fff;padding:16px;
-  display:flex;justify-content:space-between;align-items:center
+* {
+  box-sizing: border-box;
 }
 
-.categories{
-  display:flex;gap:10px;padding:12px;background:#fff;overflow-x:auto
-}
-.categories button{
-  border:2px solid #b11212;background:none;color:#b11212;
-  padding:8px 16px;border-radius:999px;font-weight:700
-}
-.categories button.active{background:#b11212;color:#fff}
-
-.products{
-  padding:14px;
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-  gap:14px
-}
-.product-card{
-  background:#fff;border-radius:14px;padding:14px;
-  box-shadow:0 6px 18px rgba(0,0,0,.12)
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f6f6f6;
+  color: #111;
 }
 
-.btn-cart,.whats-float{
-  position:fixed;bottom:16px;
-  padding:14px 18px;border-radius:999px;font-weight:700
-}
-.btn-cart{left:16px;background:#000;color:#fff}
-.whats-float{right:16px;background:#25d366;color:#fff}
-
-.cart{
-  position:fixed;right:16px;bottom:80px;background:#fff;
-  width:320px;padding:14px;border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,.25)
+/* ===== TOPO ===== */
+.topbar {
+  background: #0f0f0f;
+  color: #fff;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
 }
 
-.cart textarea,.cart select{
-  width:100%;margin:6px 0 10px;padding:8px;
-  border-radius:8px;border:1px solid #ccc
+.topbar a {
+  color: #25d366;
+  text-decoration: none;
+  font-weight: 700;
 }
 
-.modal{
-  position:fixed;top:0;left:0;right:0;bottom:0;
-  background:rgba(0,0,0,.6);
-  display:flex;align-items:center;justify-content:center
-}
-.modal-content{
-  background:#fff;border-radius:16px;padding:16px;
-  width:90%;max-width:420px
-}
-
-.step-actions{
-  display:flex;justify-content:space-between;margin-top:12px
+/* ===== INFO LOJA ===== */
+.store-info {
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  padding: 14px;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
 }
 
-.hidden{display:none}
-.promo{
-  background:#fff3cd;
-  margin:12px;
-  padding:14px;
-  border-radius:14px;
-  border:2px solid #ff9800;
-  text-align:center
+.store-info div {
+  text-align: center;
 }
-.promo h2{margin:0 0 6px;color:#b11212}
-.promo button{
-  margin-top:8px;
-  background:#ff9800;
-  border:none;
-  padding:10px 18px;
-  border-radius:999px;
-  font-weight:700;
-  color:#000
+
+/* ===== HERO ===== */
+.hero {
+  position: relative;
+  height: 180px;
+  background: linear-gradient(180deg, #000, #1a1a1a);
+  display: flex;
+  align-items: center;
+  padding: 20px;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.3), rgba(0,0,0,.9));
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+}
+
+.hero-content h2 {
+  margin: 0 0 10px;
+  font-size: 22px;
+}
+
+.hero-content button {
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+/* ===== CATEGORIAS ===== */
+.categories {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  overflow-x: auto;
+}
+
+.categories button {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #eee;
+  font-weight: 600;
+}
+
+.categories button:hover {
+  background: #0f0f0f;
+  color: #fff;
+}
+
+/* ===== PRODUTOS ===== */
+.products {
+  padding: 12px;
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.06);
+}
+
+.product-card img {
+  width: 100%;
+  border-radius: 14px;
+}
+
+.product-card h3 {
+  margin: 10px 0 4px;
+}
+
+.product-card p {
+  font-size: 14px;
+  color: #555;
+}
+
+.product-card strong {
+  font-size: 18px;
+}
+
+.product-card button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  background: #0f0f0f;
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ===== MODAL ===== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  display: flex;
+  align-items: flex-end;
+}
+
+.modal-content {
+  background: #fff;
+  width: 100%;
+  border-radius: 20px 20px 0 0;
+  padding: 16px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+}
+
+/* ===== CARRINHO ===== */
+.cart {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 16px;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -10px 30px rgba(0,0,0,.15);
+}
+
+.cart strong {
+  font-size: 20px;
+}
+
+.cart button {
+  background: #25d366;
+  border: none;
+  padding: 14px;
+  border-radius: 16px;
+  color: #fff;
+  font-weight: 800;
+}
+
+/* ===== BOTÃO FLUTUANTE ===== */
+.floating-cart {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #0f0f0f;
+  color: #fff;
+  border: none;
+  padding: 16px;
+  border-radius: 50%;
+  font-size: 20px;
+}
+
+/* ===== UTIL ===== */
+.hidden {
+  display: none;
 }
