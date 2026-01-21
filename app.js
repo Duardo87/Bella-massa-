@@ -1,6 +1,8 @@
 let data = {};
 let cart = [];
 let currentProduct = null;
+let selectedSize = null;
+let basePrice = 0;
 let userLocation = null;
 let deliveryFee = 0;
 let storeClosed = false;
@@ -41,14 +43,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 /* ================= HORÁRIO ================= */
 function checkStoreStatus(){
   if(!data.store.open || !data.store.close) return;
-
   const now = new Date();
   const [oh,om] = data.store.open.split(":");
   const [ch,cm] = data.store.close.split(":");
-
   const open = new Date(); open.setHours(oh,om,0);
   const close = new Date(); close.setHours(ch,cm,0);
-
   if(now < open || now > close){
     document.body.insertAdjacentHTML("afterbegin",
       `<div style="background:#b40000;color:#fff;padding:10px;text-align:center;font-weight:700">
@@ -67,12 +66,12 @@ function renderWeeklyPromo(){
 
   const box=document.createElement("div");
   box.style.cssText="background:#0f0f0f;color:#fff;padding:14px;margin:10px;border-radius:16px;font-weight:700";
-  box.innerHTML=`🔥 ${promo.title}<div style="font-size:14px;margin-top:4px">Apenas R$ ${Number(promo.price).toFixed(2)}</div>
-  <button style="margin-top:8px;padding:8px 14px;border:none;border-radius:12px;font-weight:700"
-    onclick="addPromo(${promo.price},'${promo.title}')">Adicionar</button>`;
+  box.innerHTML=`🔥 ${promo.title}
+    <div style="font-size:14px;margin-top:4px">Apenas R$ ${Number(promo.price).toFixed(2)}</div>
+    <button style="margin-top:8px;padding:8px 14px;border:none;border-radius:12px;font-weight:700"
+      onclick="addPromo(${promo.price},'${promo.title}')">Adicionar</button>`;
   document.body.prepend(box);
 }
-
 function addPromo(price,title){
   cart.push({name:title,desc:"Promoção do dia",price:Number(price)});
   renderCart();
@@ -92,13 +91,14 @@ function renderCategories(){
 function renderProducts(catId){
   products.innerHTML="";
   data.products.filter(p=>p.active && p.categoryId===catId).forEach(p=>{
-    const price=Math.max(...Object.values(p.prices||{}).filter(v=>v));
+    const prices = p.prices || {};
+    const minPrice = Math.min(...Object.values(prices).filter(v=>v));
     products.innerHTML+=`
       <div class="product-card">
         ${p.image?`<img src="${p.image}">`:""}
         <h3>${p.name}</h3>
         <p>${p.desc||""}</p>
-        <strong>A partir de R$ ${price.toFixed(2)}</strong>
+        <strong>A partir de R$ ${minPrice.toFixed(2)}</strong>
         <button onclick="openModal(${p.id})">Escolher</button>
       </div>`;
   });
@@ -107,22 +107,29 @@ function renderProducts(catId){
 /* ================= MODAL ================= */
 function openModal(id){
   currentProduct=data.products.find(p=>p.id===id);
+  selectedSize=null;
+  basePrice=0;
   modalTitle.textContent=currentProduct.name;
 
   sizeOptions.innerHTML=`
+    <h4>Tamanho</h4>
+    ${renderSizeOption("P","Pequena")}
+    ${renderSizeOption("M","Média")}
+    ${renderSizeOption("G","Grande")}
     <div id="halfAlert" style="display:none;background:#fff3cd;color:#856404;
-    padding:8px;border-radius:8px;margin-bottom:10px;font-size:13px">
-    ℹ️ Meio a meio pelo maior valor
+      padding:8px;border-radius:8px;margin:10px 0;font-size:13px">
+      ℹ️ Meio a meio é cobrado pelo maior valor do tamanho escolhido
     </div>
-    <h4>Sabores (até ${currentProduct.maxFlavors||2})</h4>`;
+    <h4>Sabores (até ${currentProduct.maxFlavors||2})</h4>
+  `;
 
   data.products.filter(p=>p.categoryId===currentProduct.categoryId && p.active)
     .forEach(p=>{
-      const price=Math.max(...Object.values(p.prices||{}).filter(v=>v));
       sizeOptions.innerHTML+=`
         <label>
-          <input type="checkbox" class="flavorCheck" data-name="${p.name}" data-price="${price}">
-          ${p.name} <span style="float:right">R$ ${price.toFixed(2)}</span>
+          <input type="checkbox" class="flavorCheck" data-name="${p.name}"
+            data-price-p="${p.prices.P}" data-price-m="${p.prices.M}" data-price-g="${p.prices.G}">
+          ${p.name}
           <div style="font-size:13px;color:#666">${p.desc||""}</div>
         </label>`;
     });
@@ -147,6 +154,10 @@ function openModal(id){
 
   document.querySelectorAll(".flavorCheck").forEach(chk=>{
     chk.onchange=()=>{
+      if(!selectedSize){
+        chk.checked=false;
+        return alert("Escolha o tamanho primeiro");
+      }
       const max=currentProduct.maxFlavors||2;
       const sel=[...document.querySelectorAll(".flavorCheck:checked")];
       halfAlert.style.display=sel.length>1?"block":"none";
@@ -156,15 +167,31 @@ function openModal(id){
 
   modal.classList.remove("hidden");
 }
-function closeModal(){ modal.classList.add("hidden"); }
+
+function renderSizeOption(code,label){
+  const price=currentProduct.prices?.[code];
+  if(!price) return "";
+  return `
+    <label>
+      <input type="radio" name="size" onclick="selectSize('${code}',${price})">
+      ${label} – R$ ${Number(price).toFixed(2)}
+    </label><br>`;
+}
+
+function selectSize(code,price){
+  selectedSize=code;
+  basePrice=price;
+}
 
 /* ================= CONFIRM ================= */
 function confirmProduct(){
+  if(!selectedSize) return alert("Escolha o tamanho");
   const flavors=[...document.querySelectorAll(".flavorCheck:checked")];
   if(!flavors.length) return alert("Escolha ao menos 1 sabor");
 
-  let price=Math.max(...flavors.map(f=>+f.dataset.price));
-  let desc=flavors.map(f=>f.dataset.name).join(" / ");
+  let price=Math.max(...flavors.map(f=>+f.dataset[`price${selectedSize.toLowerCase()}`]));
+  let desc=`${selectedSize==="P"?"Pequena":selectedSize==="M"?"Média":"Grande"} | `;
+  desc+=flavors.map(f=>f.dataset.name).join(" / ");
 
   const border=document.querySelector("input[name=border]:checked");
   if(border){ price+=+border.dataset.price; desc+=` | Borda ${border.dataset.name}`; }
@@ -177,6 +204,8 @@ function confirmProduct(){
   closeModal();
   renderCart();
 }
+
+function closeModal(){ modal.classList.add("hidden"); }
 
 /* ================= CART ================= */
 function renderCart(){
@@ -201,7 +230,6 @@ function useMyLocation(){
     updateDelivery();
   });
 }
-
 function calcDistance(a,b,c,d){
   const R=6371;
   const dLat=(c-a)*Math.PI/180;
@@ -211,12 +239,10 @@ function calcDistance(a,b,c,d){
     Math.sin(dLng/2)**2;
   return R*(2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)));
 }
-
 function updateDelivery(){
   if(!userLocation) return;
   const d=calcDistance(data.delivery.lat,data.delivery.lng,userLocation.lat,userLocation.lng);
   if(d>data.delivery.maxKm){ deliveryInfo.innerText="❌ Fora da área"; deliveryFee=null; return; }
-
   deliveryFee=d>data.delivery.freeKm?(d-data.delivery.freeKm)*data.delivery.priceKm:0;
   deliveryInfo.innerText=deliveryFee===0?"🚚 Entrega Grátis":`🚚 Taxa: R$ ${deliveryFee.toFixed(2)}`;
   updateTotal();
