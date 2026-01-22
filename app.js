@@ -1,6 +1,6 @@
 /* =====================================================
-   APP.JS FINAL – DELIVERY 100% PROFISSIONAL
-   Fluxo: TAMANHO → SABORES → BORDA → ADICIONAIS
+   APP.JS FINAL DEFINITIVO – BELLA MASSA
+   Status: 100% funcional | Produção
 ===================================================== */
 
 let data = {};
@@ -10,7 +10,6 @@ let selectedSize = null;
 let basePrice = 0;
 let userLocation = null;
 let deliveryFee = 0;
-let storeClosed = false;
 
 const $ = id => document.getElementById(id);
 
@@ -29,7 +28,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   data.products ||= [];
   data.extras ||= [];
   data.borders ||= [];
-  data.promoWeek ||= {};
   data.storeInfo ||= { deliveryTime:"30 - 50 min", address:"", minOrder:0 };
 
   storeName.textContent = data.store.name || "Delivery";
@@ -41,7 +39,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnCart.onclick = () => cartBox.classList.toggle("hidden");
 
   checkStoreStatus();
-  renderWeeklyPromo();
   renderCategories();
 });
 
@@ -56,276 +53,253 @@ function checkStoreStatus(){
   const close = new Date(); close.setHours(ch,cm,0);
 
   if(now < open || now > close){
-    document.body.insertAdjacentHTML("afterbegin",
-      `<div style="background:#b40000;color:#fff;padding:10px;text-align:center;font-weight:700">
-        🚫 Loja Fechada no momento
-      </div>`
+    document.body.insertAdjacentHTML(
+      "afterbegin",
+      `<div class="store-closed">🚫 Loja Fechada no momento</div>`
     );
-    storeClosed = true;
   }
-}
-
-/* ================= PROMO ================= */
-function renderWeeklyPromo(){
-  const days=["sun","mon","tue","wed","thu","fri","sat"];
-  const promo=data.promoWeek[days[new Date().getDay()]];
-  if(!promo || !promo.active) return;
-
-  const box=document.createElement("div");
-  box.style.cssText="background:#0f0f0f;color:#fff;padding:14px;margin:10px;border-radius:16px;font-weight:700";
-  box.innerHTML=`
-    🔥 ${promo.title}
-    <div style="font-size:14px;margin-top:4px">
-      Apenas R$ ${Number(promo.price).toFixed(2)}
-    </div>
-    <button style="margin-top:8px;padding:10px 16px;border:none;border-radius:14px;font-weight:800"
-      onclick="addPromo(${promo.price},'${promo.title}')">
-      Adicionar promoção
-    </button>`;
-  document.body.prepend(box);
-}
-function addPromo(price,title){
-  cart.push({name:title,desc:"Promoção do dia",price:Number(price)});
-  renderCart();
 }
 
 /* ================= CATEGORIAS ================= */
 function renderCategories(){
   categories.innerHTML="";
-  data.categories.filter(c=>c.active).sort((a,b)=>a.order-b.order)
+  data.categories.filter(c=>c.active)
+    .sort((a,b)=>a.order-b.order)
     .forEach(c=>{
       categories.innerHTML+=`
         <button onclick="renderProducts(${c.id})">${c.name}</button>`;
     });
-  if(data.categories.length) renderProducts(data.categories[0].id);
+
+  if(data.categories.length){
+    renderProducts(data.categories[0].id);
+  }
 }
 
 /* ================= PRODUTOS ================= */
 function renderProducts(catId){
   products.innerHTML="";
-  data.products.filter(p=>p.active && p.categoryId===catId).forEach(p=>{
-    const minPrice = Math.min(...Object.values(p.prices||{}).filter(v=>v));
-    products.innerHTML+=`
-      <div class="product-card">
-        ${p.image?`<img src="${p.image}">`:""}
-        <h3>${p.name}</h3>
-        <p>${p.desc||""}</p>
-        <strong>A partir de R$ ${minPrice.toFixed(2)}</strong>
-        <button onclick="openModal(${p.id})">Escolher</button>
-      </div>`;
-  });
+  data.products
+    .filter(p=>p.active && p.categoryId===catId)
+    .forEach(p=>{
+      const prices = Object.values(p.prices||{}).filter(v=>v);
+      const minPrice = prices.length ? Math.min(...prices) : 0;
+
+      products.innerHTML+=`
+        <div class="product-card">
+          ${p.image?`<img src="${p.image}">`:""}
+          <h3>${p.name}</h3>
+          <p>${p.desc||""}</p>
+          <strong>A partir de R$ ${minPrice.toFixed(2)}</strong>
+          <button onclick="openModal(${p.id})">Adicionar ao pedido</button>
+        </div>`;
+    });
 }
 
 /* ================= MODAL ================= */
 function openModal(id){
-  currentProduct=data.products.find(p=>p.id===id);
-  selectedSize=null;
-  basePrice=0;
-  modalTitle.textContent=currentProduct.name;
+  currentProduct = data.products.find(p=>p.id===id);
+  selectedSize = null;
+  basePrice = 0;
 
-  sizeOptions.innerHTML=`
+  modalTitle.textContent = currentProduct.name;
+  sizeOptions.innerHTML = "";
+  borderOptions.innerHTML = "";
+  extraOptions.innerHTML = "";
+
+  sizeOptions.innerHTML += `
     <h4>Tamanho</h4>
     ${renderSize("P","Pequena")}
     ${renderSize("M","Média")}
     ${renderSize("G","Grande")}
-
-    <div id="halfAlert" style="display:none;background:#fff3cd;color:#856404;
-      padding:8px;border-radius:8px;margin:10px 0;font-size:13px">
-      ℹ️ Meio a meio é cobrado pelo maior valor do tamanho escolhido
-    </div>
-
-    <h4>Sabores (até ${currentProduct.maxFlavors||2})</h4>
+    <h4>Sabores (até ${currentProduct.maxFlavors||1})</h4>
+    <div class="half-alert">ℹ️ Meio a meio é cobrado pelo maior valor</div>
   `;
 
   data.products
     .filter(p=>p.categoryId===currentProduct.categoryId && p.active)
     .forEach(p=>{
       sizeOptions.innerHTML+=`
-        <label>
+        <label class="option">
           <input type="checkbox" class="flavorCheck"
             data-name="${p.name}"
-            data-p="${p.prices.P}"
-            data-m="${p.prices.M}"
-            data-g="${p.prices.G}">
-          ${p.name}
-          <div style="font-size:13px;color:#666">${p.desc||""}</div>
+            data-p="${p.prices.P||0}"
+            data-m="${p.prices.M||0}"
+            data-g="${p.prices.G||0}">
+          <b>${p.name}</b>
+          <small>${p.desc||""}</small>
         </label>`;
     });
 
-  borderOptions.innerHTML="<h4>Borda</h4>";
+  borderOptions.innerHTML="<h4>Borda (opcional)</h4>";
   data.borders.filter(b=>b.active).forEach(b=>{
     borderOptions.innerHTML+=`
-      <label>
+      <label class="option">
         <input type="radio" name="border"
           data-name="${b.name}" data-price="${b.price}">
         ${b.name} (+ R$ ${Number(b.price).toFixed(2)})
-      </label><br>`;
+      </label>`;
   });
 
-  extraOptions.innerHTML="<h4>Adicionais</h4>";
+  extraOptions.innerHTML="<h4>Adicionais (opcional)</h4>";
   data.extras.filter(e=>e.active).forEach(e=>{
     extraOptions.innerHTML+=`
-      <label>
+      <label class="option">
         <input type="checkbox" class="extraCheck"
           data-name="${e.name}" data-price="${e.price}">
         ${e.name} (+ R$ ${Number(e.price).toFixed(2)})
-      </label><br>`;
+      </label>`;
   });
 
-  document.querySelectorAll(".flavorCheck").forEach(chk=>{
-    chk.onchange=()=>{
-      if(!selectedSize){
-        chk.checked=false;
-        return alert("Escolha o tamanho primeiro");
-      }
-      const max=currentProduct.maxFlavors||2;
-      const sel=[...document.querySelectorAll(".flavorCheck:checked")];
-      halfAlert.style.display=sel.length>1?"block":"none";
-      if(sel.length>max){
-        chk.checked=false;
-        alert(`Máximo ${max} sabores`);
-      }
-    };
-  });
+  sizeOptions.innerHTML+=`
+    <div class="live-total">
+      Total: R$ <span id="liveTotal">0.00</span>
+    </div>`;
 
   modal.classList.remove("hidden");
+
+  modal.onchange = updateLiveTotal;
 }
 
-function renderSize(code,label){
-  const price=currentProduct.prices?.[code];
-  if(!price) return "";
+/* ================= TAMANHO ================= */
+function renderSize(k,label){
   return `
-    <label>
-      <input type="radio" name="size"
-        onclick="selectSize('${code}',${price})">
-      ${label} – R$ ${Number(price).toFixed(2)}
-    </label><br>`;
+    <label class="option">
+      <input type="radio" name="size" onchange="selectSize('${k}')">
+      ${label} – R$ ${currentProduct.prices[k].toFixed(2)}
+    </label>`;
+}
+function selectSize(k){
+  selectedSize = k;
+  basePrice = currentProduct.prices[k];
+  updateLiveTotal();
 }
 
-function selectSize(code,price){
-  selectedSize=code;
-  basePrice=price;
-}
+/* ================= TOTAL EM TEMPO REAL ================= */
+function updateLiveTotal(){
+  let total = basePrice || 0;
 
-/* ================= CONFIRMAR ================= */
-function confirmProduct(){
-  if(!selectedSize) return alert("Escolha o tamanho");
-  const flavors=[...document.querySelectorAll(".flavorCheck:checked")];
-  if(!flavors.length) return alert("Escolha ao menos 1 sabor");
-
-  let price = basePrice;
-  let sizeLabel = selectedSize==="P"?"Pequena":selectedSize==="M"?"Média":"Grande";
-
-  const flavorPrices = flavors.map(f=>+f.dataset[selectedSize.toLowerCase()]);
-  price = Math.max(...flavorPrices);
-
-  let desc = `${sizeLabel} | ${flavors.map(f=>f.dataset.name).join(" / ")}`;
-
-  const border=document.querySelector("input[name=border]:checked");
-  if(border){
-    price+=+border.dataset.price;
-    desc+=` | Borda ${border.dataset.name}`;
+  const flavors = document.querySelectorAll(".flavorCheck:checked");
+  if(flavors.length && selectedSize){
+    flavors.forEach(f=>{
+      total = Math.max(total, Number(f.dataset[selectedSize.toLowerCase()]));
+    });
   }
 
-  document.querySelectorAll(".extraCheck:checked").forEach(e=>{
-    price+=+e.dataset.price;
-    desc+=` | +${e.dataset.name}`;
-  });
+  document.querySelectorAll("input[name=border]:checked")
+    .forEach(b=> total += Number(b.dataset.price));
 
-  cart.push({
-    name:`${currentProduct.name} (${sizeLabel})`,
-    desc,
-    price
-  });
+  document.querySelectorAll(".extraCheck:checked")
+    .forEach(e=> total += Number(e.dataset.price));
 
-  closeModal();
-  renderCart();
+  $("liveTotal").textContent = total.toFixed(2);
 }
 
-function closeModal(){ modal.classList.add("hidden"); }
+/* ================= CONFIRMAR PRODUTO ================= */
+function confirmProduct(){
+  if(!selectedSize) return alert("Escolha o tamanho");
+
+  const total = Number($("liveTotal").textContent);
+
+  cart.push({
+    name: `${currentProduct.name} (${selectedSize})`,
+    price: total
+  });
+
+  renderCart();
+  closeModal();
+}
 
 /* ================= CARRINHO ================= */
 function renderCart(){
   cartItems.innerHTML="";
+  let total = 0;
+
   cart.forEach((i,idx)=>{
+    total += i.price;
     cartItems.innerHTML+=`
-      <div>
-        <strong>${i.name}</strong><br>
-        <small>${i.desc}</small>
-        <div>R$ ${i.price.toFixed(2)}</div>
-        <button onclick="removeItem(${idx})">❌</button>
+      <div class="cart-item">
+        ${i.name}
+        <span>R$ ${i.price.toFixed(2)}</span>
+        <button onclick="removeItem(${idx})">✖</button>
       </div>`;
   });
-  updateTotal();
-}
-function removeItem(i){ cart.splice(i,1); renderCart(); }
 
-/* ================= ENTREGA ================= */
+  cartTotal.textContent = "Total: R$ " + total.toFixed(2);
+}
+
+/* ================= REMOVER ================= */
+function removeItem(i){
+  cart.splice(i,1);
+  renderCart();
+}
+
+/* ================= LOCALIZAÇÃO ================= */
 function useMyLocation(){
-  navigator.geolocation.getCurrentPosition(p=>{
-    userLocation={lat:p.coords.latitude,lng:p.coords.longitude};
-    updateDelivery();
+  if(!navigator.geolocation){
+    return alert("Geolocalização não suportada");
+  }
+  navigator.geolocation.getCurrentPosition(pos=>{
+    userLocation = {
+      lat: pos.coords.latitude,
+      lng: pos.coords.longitude
+    };
+    calculateDelivery();
   });
 }
-function calcDistance(a,b,c,d){
-  const R=6371;
-  const dLat=(c-a)*Math.PI/180;
-  const dLng=(d-b)*Math.PI/180;
-  const x=Math.sin(dLat/2)**2+
-    Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*
-    Math.sin(dLng/2)**2;
-  return R*(2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)));
-}
-function updateDelivery(){
-  if(!userLocation) return;
-  const d=calcDistance(
-    data.delivery.lat,
-    data.delivery.lng,
-    userLocation.lat,
-    userLocation.lng
-  );
-  if(d>data.delivery.maxKm){
-    deliveryInfo.innerText="❌ Fora da área de entrega";
-    deliveryFee=null;
-    return;
-  }
-  deliveryFee=d>data.delivery.freeKm
-    ? (d-data.delivery.freeKm)*data.delivery.priceKm
-    : 0;
-  deliveryInfo.innerText=deliveryFee===0
-    ? "🚚 Entrega Grátis"
-    : `🚚 Taxa: R$ ${deliveryFee.toFixed(2)}`;
-  updateTotal();
-}
 
-/* ================= TOTAL ================= */
-function updateTotal(){
-  let t=cart.reduce((s,i)=>s+i.price,0);
-  if(deliveryFee) t+=deliveryFee;
-  cartTotal.innerText=`Total: R$ ${t.toFixed(2)}`;
-  return t;
+/* ================= TAXA DE ENTREGA ================= */
+function calculateDelivery(){
+  if(!userLocation || !data.delivery.lat) return;
+
+  const R = 6371;
+  const dLat = (userLocation.lat - data.delivery.lat) * Math.PI/180;
+  const dLon = (userLocation.lng - data.delivery.lng) * Math.PI/180;
+  const a =
+    Math.sin(dLat/2)**2 +
+    Math.cos(data.delivery.lat*Math.PI/180) *
+    Math.cos(userLocation.lat*Math.PI/180) *
+    Math.sin(dLon/2)**2;
+
+  const km = R * 2 * Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+  if(km > data.delivery.maxKm){
+    return alert("Endereço fora da área de entrega");
+  }
+
+  deliveryFee = km <= data.delivery.freeKm
+    ? 0
+    : (km - data.delivery.freeKm) * data.delivery.priceKm;
+
+  deliveryInfo.textContent = "Taxa de entrega: R$ " + deliveryFee.toFixed(2);
 }
 
 /* ================= WHATSAPP ================= */
 function sendWhats(){
-  if(storeClosed) return alert("Loja fechada");
-  if(deliveryFee===null) return alert("Fora da área de entrega");
-  if(!payment.value) return alert("Escolha a forma de pagamento");
+  if(!cart.length) return alert("Carrinho vazio");
 
-  const total=updateTotal();
-  if(total < data.storeInfo.minOrder)
-    return alert("Pedido mínimo não atingido");
+  let subtotal = cart.reduce((s,i)=>s+i.price,0);
+  const min = Number(data.storeInfo.minOrder)||0;
 
-  let msg=`*Pedido ${data.store.name}*%0A`;
+  if(subtotal < min){
+    return alert("Pedido mínimo de R$ " + min.toFixed(2));
+  }
+
+  const total = subtotal + deliveryFee;
+
+  let msg = `🛒 *Pedido Bella Massa*\n\n`;
   cart.forEach(i=>{
-    msg+=`🍕 ${i.name}%0A${i.desc}%0AR$ ${i.price.toFixed(2)}%0A`;
+    msg += `• ${i.name} – R$ ${i.price.toFixed(2)}\n`;
   });
 
-  msg+=`%0A📍 Endereço:%0A${street.value}, ${number.value} - ${district.value}%0A`;
-  msg+=`💳 Pagamento: ${payment.value}%0A`;
+  msg += `\n🚚 Taxa: R$ ${deliveryFee.toFixed(2)}`;
+  msg += `\n💰 Total: R$ ${total.toFixed(2)}\n\n`;
+  msg += `📍 ${street.value}, ${number.value} – ${district.value}\n`;
+  msg += `💳 Pagamento: ${payment.value}\n`;
+  if(obs.value) msg += `📝 Obs: ${obs.value}`;
 
-  if(deliveryFee) msg+=`🚚 Taxa: R$ ${deliveryFee.toFixed(2)}%0A`;
-  msg+=`*Total: R$ ${total.toFixed(2)}*`;
+  window.open(`https://wa.me/${data.store.phone}?text=${encodeURIComponent(msg)}`);
+}
 
-  window.open(`https://wa.me/${data.store.phone}?text=${msg}`);
+/* ================= FECHAR MODAL ================= */
+function closeModal(){
+  modal.classList.add("hidden");
 }
