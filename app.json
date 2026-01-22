@@ -9,9 +9,9 @@
     "valorKm": 2,
     "limiteKm": 10
   },
-
-  "categorias": ["Pizzas"],
-
+  "categorias": [
+    "Pizzas"
+  ],
   "produtos": [
     {
       "nome": "Mussarela",
@@ -19,7 +19,11 @@
       "descricao": "Queijo derretido 🧀",
       "imagem": "img/mussarela.jpg",
       "maisVendido": true,
-      "precos": { "P": 27.9, "M": 37.9, "G": 47.9 }
+      "precos": {
+        "P": 27.9,
+        "M": 37.9,
+        "G": 47.9
+      }
     },
     {
       "nome": "Calabresa",
@@ -27,26 +31,47 @@
       "descricao": "Calabresa fatiada com cebola",
       "imagem": "img/calabresa.jpg",
       "maisVendido": false,
-      "precos": { "P": 29.9, "M": 39.9, "G": 49.9 }
+      "precos": {
+        "P": 29.9,
+        "M": 39.9,
+        "G": 49.9
+      }
     }
   ],
-
   "bordas": [
-    { "nome": "Borda Catupiry", "preco": 7.9 },
-    { "nome": "Borda Cheddar", "preco": 7.9 }
+    {
+      "nome": "Borda Catupiry",
+      "preco": 7.9
+    },
+    {
+      "nome": "Borda Cheddar",
+      "preco": 7.9
+    }
   ],
-
   "adicionais": [
-    { "nome": "Extra Bacon", "preco": 5.9 },
-    { "nome": "Extra Queijo", "preco": 4.9 }
+    {
+      "nome": "Extra Bacon",
+      "preco": 5.9
+    },
+    {
+      "nome": "Extra Queijo",
+      "preco": 4.9
+    }
   ],
-
   "bebidas": [
-    { "nome": "Coca-Cola 2L", "preco": 12.0 },
-    { "nome": "Guaraná 1,5L", "preco": 10.0 },
-    { "nome": "Água", "preco": 4.0 }
+    {
+      "nome": "Coca-Cola 2L",
+      "preco": 12
+    },
+    {
+      "nome": "Guaraná 1,5L",
+      "preco": 10
+    },
+    {
+      "nome": "Água",
+      "preco": 4
+    }
   ],
-
   "promocoes": [
     "🔥 Alta demanda hoje — peça agora!",
     "🍕 Borda recheada por apenas R$ 7,90",
