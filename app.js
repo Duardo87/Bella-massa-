@@ -1,6 +1,6 @@
 /* =====================================================
-   APP.JS FINAL DEFINITIVO – BELLA MASSA
-   Status: 100% funcional | Produção
+   APP.JS FINAL DEFINITIVO – DELIVERY
+   Status: PRODUÇÃO | 100% FECHADO
 ===================================================== */
 
 let data = {};
@@ -8,33 +8,35 @@ let cart = [];
 let currentProduct = null;
 let selectedSize = null;
 let basePrice = 0;
-let userLocation = null;
 let deliveryFee = 0;
+let storeOpen = true;
+let userLocation = null;
 
 const $ = id => document.getElementById(id);
 
 /* ================= LOAD ================= */
 async function loadData(){
   const r = await fetch("app.json?" + Date.now());
-  return await r.json();
+  return r.json();
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
   data = await loadData();
 
   data.store ||= {};
+  data.storeInfo ||= { deliveryTime:"", address:"", minOrder:0 };
   data.delivery ||= {};
   data.categories ||= [];
   data.products ||= [];
   data.extras ||= [];
   data.borders ||= [];
-  data.storeInfo ||= { deliveryTime:"30 - 50 min", address:"", minOrder:0 };
 
   storeName.textContent = data.store.name || "Delivery";
   storePhone.href = "https://wa.me/" + (data.store.phone || "");
-  storeDeliveryTime.textContent = data.storeInfo.deliveryTime;
+  storeDeliveryTime.textContent = data.storeInfo.deliveryTime || "";
   storeAddress.textContent = data.storeInfo.address || "";
-  storeMinOrder.textContent = "R$ " + Number(data.storeInfo.minOrder).toFixed(2);
+  storeMinOrder.textContent =
+    "R$ " + Number(data.storeInfo.minOrder || 0).toFixed(2);
 
   btnCart.onclick = () => cartBox.classList.toggle("hidden");
 
@@ -45,6 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 /* ================= HORÁRIO ================= */
 function checkStoreStatus(){
   if(!data.store.open || !data.store.close) return;
+
   const now = new Date();
   const [oh,om] = data.store.open.split(":");
   const [ch,cm] = data.store.close.split(":");
@@ -52,51 +55,63 @@ function checkStoreStatus(){
   const open = new Date(); open.setHours(oh,om,0);
   const close = new Date(); close.setHours(ch,cm,0);
 
-  if(now < open || now > close){
+  storeOpen = now >= open && now <= close;
+
+  if(!storeOpen){
     document.body.insertAdjacentHTML(
       "afterbegin",
-      `<div class="store-closed">🚫 Loja Fechada no momento</div>`
+      `<div class="store-closed">🚫 Loja fechada no momento</div>`
     );
   }
 }
 
 /* ================= CATEGORIAS ================= */
 function renderCategories(){
-  categories.innerHTML="";
-  data.categories.filter(c=>c.active)
-    .sort((a,b)=>a.order-b.order)
-    .forEach(c=>{
-      categories.innerHTML+=`
-        <button onclick="renderProducts(${c.id})">${c.name}</button>`;
-    });
+  categories.innerHTML = "";
 
-  if(data.categories.length){
-    renderProducts(data.categories[0].id);
+  const activeCats = data.categories
+    .filter(c => c.active)
+    .sort((a,b)=>a.order-b.order);
+
+  activeCats.forEach(c=>{
+    categories.innerHTML +=
+      `<button onclick="renderProducts(${c.id})">${c.name}</button>`;
+  });
+
+  if(activeCats.length){
+    renderProducts(activeCats[0].id);
   }
 }
 
 /* ================= PRODUTOS ================= */
 function renderProducts(catId){
-  products.innerHTML="";
+  products.innerHTML = "";
+
   data.products
-    .filter(p=>p.active && p.categoryId===catId)
+    .filter(p => p.active && p.categoryId === catId)
+    .sort((a,b)=>a.order-b.order)
     .forEach(p=>{
       const prices = Object.values(p.prices||{}).filter(v=>v);
       const minPrice = prices.length ? Math.min(...prices) : 0;
 
-      products.innerHTML+=`
+      products.innerHTML += `
         <div class="product-card">
-          ${p.image?`<img src="${p.image}">`:""}
+          ${p.image ? `<img src="${p.image}">` : ""}
           <h3>${p.name}</h3>
-          <p>${p.desc||""}</p>
+          <p>${p.desc || ""}</p>
           <strong>A partir de R$ ${minPrice.toFixed(2)}</strong>
-          <button onclick="openModal(${p.id})">Adicionar ao pedido</button>
+          <button onclick="openModal(${p.id})">Adicionar</button>
         </div>`;
     });
 }
 
 /* ================= MODAL ================= */
 function openModal(id){
+  if(!storeOpen){
+    alert("A loja está fechada no momento");
+    return;
+  }
+
   currentProduct = data.products.find(p=>p.id===id);
   selectedSize = null;
   basePrice = 0;
@@ -106,103 +121,103 @@ function openModal(id){
   borderOptions.innerHTML = "";
   extraOptions.innerHTML = "";
 
+  sizeOptions.innerHTML += "<h4>Tamanho</h4>";
+  ["P","M","G"].forEach(k=>{
+    if(currentProduct.prices[k]){
+      sizeOptions.innerHTML += `
+        <label class="option">
+          <input type="radio" name="size" onchange="selectSize('${k}')">
+          ${k==="P"?"Pequena":k==="M"?"Média":"Grande"} –
+          R$ ${currentProduct.prices[k].toFixed(2)}
+        </label>`;
+    }
+  });
+
   sizeOptions.innerHTML += `
-    <h4>Tamanho</h4>
-    ${renderSize("P","Pequena")}
-    ${renderSize("M","Média")}
-    ${renderSize("G","Grande")}
-    <h4>Sabores (até ${currentProduct.maxFlavors||1})</h4>
-    <div class="half-alert">ℹ️ Meio a meio é cobrado pelo maior valor</div>
-  `;
+    <h4>Sabores (até ${currentProduct.maxFlavors || 1})</h4>
+    <div class="half-alert">
+      Meio a meio será cobrado pelo maior valor
+    </div>`;
 
   data.products
     .filter(p=>p.categoryId===currentProduct.categoryId && p.active)
     .forEach(p=>{
-      sizeOptions.innerHTML+=`
+      sizeOptions.innerHTML += `
         <label class="option">
           <input type="checkbox" class="flavorCheck"
-            data-name="${p.name}"
             data-p="${p.prices.P||0}"
             data-m="${p.prices.M||0}"
             data-g="${p.prices.G||0}">
-          <b>${p.name}</b>
-          <small>${p.desc||""}</small>
+          ${p.name}
         </label>`;
     });
 
-  borderOptions.innerHTML="<h4>Borda (opcional)</h4>";
+  borderOptions.innerHTML = "<h4>Borda (opcional)</h4>";
   data.borders.filter(b=>b.active).forEach(b=>{
-    borderOptions.innerHTML+=`
+    borderOptions.innerHTML += `
       <label class="option">
-        <input type="radio" name="border"
-          data-name="${b.name}" data-price="${b.price}">
+        <input type="radio" name="border" data-price="${b.price}">
         ${b.name} (+ R$ ${Number(b.price).toFixed(2)})
       </label>`;
   });
 
-  extraOptions.innerHTML="<h4>Adicionais (opcional)</h4>";
+  extraOptions.innerHTML = "<h4>Adicionais (opcional)</h4>";
   data.extras.filter(e=>e.active).forEach(e=>{
-    extraOptions.innerHTML+=`
+    extraOptions.innerHTML += `
       <label class="option">
-        <input type="checkbox" class="extraCheck"
-          data-name="${e.name}" data-price="${e.price}">
+        <input type="checkbox" class="extraCheck" data-price="${e.price}">
         ${e.name} (+ R$ ${Number(e.price).toFixed(2)})
       </label>`;
   });
 
-  sizeOptions.innerHTML+=`
-    <div class="live-total">
-      Total: R$ <span id="liveTotal">0.00</span>
-    </div>`;
-
-  modal.classList.remove("hidden");
-
   modal.onchange = updateLiveTotal;
+  updateLiveTotal();
+  modal.classList.remove("hidden");
 }
 
 /* ================= TAMANHO ================= */
-function renderSize(k,label){
-  return `
-    <label class="option">
-      <input type="radio" name="size" onchange="selectSize('${k}')">
-      ${label} – R$ ${currentProduct.prices[k].toFixed(2)}
-    </label>`;
-}
 function selectSize(k){
   selectedSize = k;
   basePrice = currentProduct.prices[k];
   updateLiveTotal();
 }
 
-/* ================= TOTAL EM TEMPO REAL ================= */
+/* ================= TOTAL ================= */
 function updateLiveTotal(){
   let total = basePrice || 0;
 
-  const flavors = document.querySelectorAll(".flavorCheck:checked");
-  if(flavors.length && selectedSize){
-    flavors.forEach(f=>{
-      total = Math.max(total, Number(f.dataset[selectedSize.toLowerCase()]));
+  if(selectedSize){
+    document.querySelectorAll(".flavorCheck:checked").forEach(f=>{
+      total = Math.max(
+        total,
+        Number(f.dataset[selectedSize.toLowerCase()])
+      );
     });
   }
 
-  document.querySelectorAll("input[name=border]:checked")
+  document
+    .querySelectorAll("input[name=border]:checked")
     .forEach(b=> total += Number(b.dataset.price));
 
-  document.querySelectorAll(".extraCheck:checked")
+  document
+    .querySelectorAll(".extraCheck:checked")
     .forEach(e=> total += Number(e.dataset.price));
 
   $("liveTotal").textContent = total.toFixed(2);
 }
 
-/* ================= CONFIRMAR PRODUTO ================= */
+/* ================= CONFIRMAR ================= */
 function confirmProduct(){
-  if(!selectedSize) return alert("Escolha o tamanho");
+  if(!selectedSize){
+    alert("Escolha o tamanho");
+    return;
+  }
 
-  const total = Number($("liveTotal").textContent);
+  const price = Number($("liveTotal").textContent);
 
   cart.push({
     name: `${currentProduct.name} (${selectedSize})`,
-    price: total
+    price
   });
 
   renderCart();
@@ -211,33 +226,31 @@ function confirmProduct(){
 
 /* ================= CARRINHO ================= */
 function renderCart(){
-  cartItems.innerHTML="";
-  let total = 0;
+  cartItems.innerHTML = "";
+  let subtotal = 0;
 
-  cart.forEach((i,idx)=>{
-    total += i.price;
-    cartItems.innerHTML+=`
+  cart.forEach(i=>{
+    subtotal += i.price;
+    cartItems.innerHTML += `
       <div class="cart-item">
         ${i.name}
         <span>R$ ${i.price.toFixed(2)}</span>
-        <button onclick="removeItem(${idx})">✖</button>
       </div>`;
   });
 
-  cartTotal.textContent = "Total: R$ " + total.toFixed(2);
-}
-
-/* ================= REMOVER ================= */
-function removeItem(i){
-  cart.splice(i,1);
-  renderCart();
+  cartTotal.textContent =
+    `Subtotal: R$ ${subtotal.toFixed(2)} | ` +
+    `Entrega: R$ ${deliveryFee.toFixed(2)} | ` +
+    `Total: R$ ${(subtotal + deliveryFee).toFixed(2)}`;
 }
 
 /* ================= LOCALIZAÇÃO ================= */
 function useMyLocation(){
   if(!navigator.geolocation){
-    return alert("Geolocalização não suportada");
+    alert("Geolocalização não suportada");
+    return;
   }
+
   navigator.geolocation.getCurrentPosition(pos=>{
     userLocation = {
       lat: pos.coords.latitude,
@@ -247,40 +260,52 @@ function useMyLocation(){
   });
 }
 
-/* ================= TAXA DE ENTREGA ================= */
+/* ================= ENTREGA ================= */
 function calculateDelivery(){
   if(!userLocation || !data.delivery.lat) return;
 
   const R = 6371;
   const dLat = (userLocation.lat - data.delivery.lat) * Math.PI/180;
   const dLon = (userLocation.lng - data.delivery.lng) * Math.PI/180;
+
   const a =
     Math.sin(dLat/2)**2 +
     Math.cos(data.delivery.lat*Math.PI/180) *
     Math.cos(userLocation.lat*Math.PI/180) *
     Math.sin(dLon/2)**2;
 
-  const km = R * 2 * Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+  const km = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
   if(km > data.delivery.maxKm){
-    return alert("Endereço fora da área de entrega");
+    alert("Endereço fora da área de entrega");
+    deliveryFee = 0;
+    return;
   }
 
-  deliveryFee = km <= data.delivery.freeKm
-    ? 0
-    : (km - data.delivery.freeKm) * data.delivery.priceKm;
+  deliveryFee =
+    km <= data.delivery.freeKm
+      ? 0
+      : (km - data.delivery.freeKm) * data.delivery.priceKm;
 
-  deliveryInfo.textContent = "Taxa de entrega: R$ " + deliveryFee.toFixed(2);
+  deliveryInfo.textContent =
+    "Taxa de entrega: R$ " + deliveryFee.toFixed(2);
+
+  renderCart();
 }
 
 /* ================= WHATSAPP ================= */
 function sendWhats(){
-  if(!cart.length) return alert("Carrinho vazio");
+  if(!cart.length){
+    alert("Carrinho vazio");
+    return;
+  }
 
-  let subtotal = cart.reduce((s,i)=>s+i.price,0);
-  const min = Number(data.storeInfo.minOrder)||0;
+  const subtotal = cart.reduce((s,i)=>s+i.price,0);
+  const min = Number(data.storeInfo.minOrder || 0);
 
   if(subtotal < min){
-    return alert("Pedido mínimo de R$ " + min.toFixed(2));
+    alert("Pedido mínimo de R$ " + min.toFixed(2));
+    return;
   }
 
   const total = subtotal + deliveryFee;
@@ -290,16 +315,19 @@ function sendWhats(){
     msg += `• ${i.name} – R$ ${i.price.toFixed(2)}\n`;
   });
 
-  msg += `\n🚚 Taxa: R$ ${deliveryFee.toFixed(2)}`;
-  msg += `\n💰 Total: R$ ${total.toFixed(2)}\n\n`;
-  msg += `📍 ${street.value}, ${number.value} – ${district.value}\n`;
-  msg += `💳 Pagamento: ${payment.value}\n`;
-  if(obs.value) msg += `📝 Obs: ${obs.value}`;
+  msg += `\n🚚 Entrega: R$ ${deliveryFee.toFixed(2)}`;
+  msg += `\n💰 Total: R$ ${total.toFixed(2)}`;
 
-  window.open(`https://wa.me/${data.store.phone}?text=${encodeURIComponent(msg)}`);
+  msg += `\n\n📍 Endereço: ${street.value}, ${number.value} – ${district.value}`;
+  msg += `\n💳 Pagamento: ${payment.value || "Não informado"}`;
+  if(obs.value) msg += `\n📝 Obs: ${obs.value}`;
+
+  window.open(
+    `https://wa.me/${data.store.phone}?text=${encodeURIComponent(msg)}`
+  );
 }
 
-/* ================= FECHAR MODAL ================= */
+/* ================= FECHAR ================= */
 function closeModal(){
   modal.classList.add("hidden");
 }

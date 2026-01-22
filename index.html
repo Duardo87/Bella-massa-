@@ -4,50 +4,60 @@
   <meta charset="UTF-8">
   <title>Bella Massa Pizzaria</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Peça pizza online na Bella Massa.">
+  <meta name="description" content="Peça pizza online na Bella Massa">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <header class="topbar">
-  <span id="storeName">Bella Massa</span>
+  <span id="storeName"></span>
   <a id="storePhone" target="_blank">WhatsApp</a>
 </header>
 
 <section class="store-info">
   <div>
-    <strong id="storeDeliveryTime">30 - 50 min</strong>
+    <strong id="storeDeliveryTime"></strong>
     <span>Entrega</span>
   </div>
   <div>
-    <strong id="storeAddress">Goiânia</strong>
+    <strong id="storeAddress"></strong>
   </div>
   <div>
-    <strong id="storeMinOrder">R$ 0,00</strong>
+    <strong id="storeMinOrder"></strong>
     <span>Pedido mínimo</span>
   </div>
 </section>
 
-<section class="hero">
-  <div id="heroSlides"></div>
-</section>
+<div id="categories" class="categories"></div>
+<div id="products" class="products"></div>
 
-<div class="categories" id="categories"></div>
-<div class="products" id="products"></div>
-
+<!-- MODAL -->
 <div id="modal" class="modal hidden">
   <div class="modal-content">
+
     <h3 id="modalTitle"></h3>
+
     <div id="sizeOptions"></div>
     <div id="borderOptions"></div>
     <div id="extraOptions"></div>
-    <button onclick="confirmProduct()">Adicionar</button>
-    <button onclick="closeModal()">Cancelar</button>
+
+    <!-- TOTAL + CTA FIXOS -->
+    <div class="modal-footer-fixed">
+      <div class="modal-total">
+        Total: R$ <span id="liveTotal">0.00</span>
+      </div>
+      <button class="btn-confirm" onclick="confirmProduct()">Adicionar</button>
+    </div>
+
+    <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+
   </div>
 </div>
 
+<!-- CARRINHO -->
 <div id="cartBox" class="cart hidden">
   <h3>Seu pedido</h3>
+
   <div id="cartItems"></div>
   <p id="deliveryInfo"></p>
   <strong id="cartTotal"></strong>
@@ -66,6 +76,7 @@
   </select>
 
   <textarea id="obs" placeholder="Observações"></textarea>
+
   <button onclick="sendWhats()">Enviar no WhatsApp</button>
 </div>
 
