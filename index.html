@@ -1,86 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Bella Massa Pizzaria</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Peça pizza online na Bella Massa">
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bella Massa Delivery</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 
-<header class="topbar">
-  <span id="storeName"></span>
-  <a id="storePhone" target="_blank">WhatsApp</a>
+<header>
+  <h1>Bella Massa 🍕</h1>
+  <span id="status"></span>
+  <small>⏰ 18:30 às 23:59 • ⏱ <span id="time"></span></small>
 </header>
 
-<section class="store-info">
-  <div>
-    <strong id="storeDeliveryTime"></strong>
-    <span>Entrega</span>
-  </div>
-  <div>
-    <strong id="storeAddress"></strong>
-  </div>
-  <div>
-    <strong id="storeMinOrder"></strong>
-    <span>Pedido mínimo</span>
-  </div>
-</section>
+<section id="promo"></section>
 
-<div id="categories" class="categories"></div>
-<div id="products" class="products"></div>
+<main id="menu"></main>
 
-<!-- MODAL -->
-<div id="modal" class="modal hidden">
-  <div class="modal-content">
-
-    <h3 id="modalTitle"></h3>
-
-    <div id="sizeOptions"></div>
-    <div id="borderOptions"></div>
-    <div id="extraOptions"></div>
-
-    <!-- TOTAL + CTA FIXOS -->
-    <div class="modal-footer-fixed">
-      <div class="modal-total">
-        Total: R$ <span id="liveTotal">0.00</span>
-      </div>
-      <button class="btn-confirm" onclick="confirmProduct()">Adicionar</button>
-    </div>
-
-    <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
-
-  </div>
-</div>
-
-<!-- CARRINHO -->
-<div id="cartBox" class="cart hidden">
-  <h3>Seu pedido</h3>
-
+<section id="cart">
+  <h2>🛒 Carrinho</h2>
   <div id="cartItems"></div>
-  <p id="deliveryInfo"></p>
-  <strong id="cartTotal"></strong>
-
-  <input id="street" placeholder="Rua">
-  <input id="number" placeholder="Número">
-  <input id="district" placeholder="Bairro">
-
-  <button onclick="useMyLocation()">📍 Usar minha localização</button>
-
-  <select id="payment">
-    <option value="">Pagamento</option>
-    <option>Pix</option>
-    <option>Dinheiro</option>
-    <option>Cartão</option>
-  </select>
-
-  <textarea id="obs" placeholder="Observações"></textarea>
-
-  <button onclick="sendWhats()">Enviar no WhatsApp</button>
-</div>
-
-<button id="btnCart" class="floating-cart">🛒</button>
+  <p>Taxa de entrega: R$ <span id="deliveryFee">0.00</span></p>
+  <h3>Total: R$ <span id="total">0.00</span></h3>
+  <button onclick="checkout()">Enviar pedido no WhatsApp</button>
+</section>
 
 <script src="app.js"></script>
 </body>
