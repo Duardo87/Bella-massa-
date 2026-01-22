@@ -122,6 +122,15 @@ main {
   font-weight: 800;
 }
 
+.produto h3 span {
+  background: #e53935;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  margin-left: 6px;
+}
+
 .produto p {
   font-size: 14px;
   margin-top: 6px;
@@ -185,4 +194,144 @@ main {
 
 .cart.active {
   transform: translateY(0);
+}
+
+.cart h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.resumo div {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 15px;
+}
+
+.total-final {
+  font-size: 18px;
+  font-weight: 800;
+  margin-top: 10px;
+}
+
+.cart textarea {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.cart button {
+  margin-top: 14px;
+  background: linear-gradient(135deg, #0a7d45, #0fb36a);
+  color: #fff;
+  border: none;
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 900;
+  border-radius: 14px;
+}
+
+.upsell {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: 700;
+  color: #0a7d45;
+}
+
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #fff;
+  width: 92%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 20px;
+  padding: 16px;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  right: 16px;
+  top: 12px;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.modal-section {
+  margin-top: 14px;
+}
+
+.modal-section h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.aviso {
+  background: #fff3cd;
+  padding: 8px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.opcoes,
+.sabores,
+.extras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.opcoes button,
+.sabores button,
+.extras button {
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-weight: 700;
+}
+
+.opcoes button.active,
+.sabores button.active,
+.extras button.active {
+  background: #0a7d45;
+  color: #fff;
+  border-color: #0a7d45;
+}
+
+.modal-footer {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-footer button {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-weight: 800;
+}
+
+/* ANIMAÇÃO */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
