@@ -2,33 +2,80 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Bella Massa</title>
+  <title>Admin • Bella Massa</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 16px;
+      max-width: 700px;
+      margin: auto;
+    }
+    h1, h2 {
+      margin-top: 24px;
+    }
+    input, button {
+      width: 100%;
+      padding: 8px;
+      margin: 4px 0;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    button.remover {
+      background: #e53935;
+      color: #fff;
+      border: none;
+      padding: 4px 8px;
+    }
+  </style>
 </head>
 <body>
 
-<h1>Admin Bella Massa</h1>
+<h1>Admin • Bella Massa 🍕</h1>
 
-<label><input type="checkbox" id="lojaAberta"> Loja aberta</label><br>
-<input id="horario" placeholder="Horário">
+<h2>Configurações da Loja</h2>
+<label>
+  <input type="checkbox" id="lojaAberta"> Loja aberta
+</label>
+<input id="horario" placeholder="Horário de funcionamento">
 <input id="tempoEntrega" placeholder="Tempo de entrega">
 
+<hr>
+
 <h2>Bordas</h2>
-<input id="bordaNome"><input id="bordaPreco" type="number">
-<button onclick="addBorda()">Adicionar</button>
+<input id="bordaNome" placeholder="Nome da borda">
+<input id="bordaPreco" type="number" step="0.01" placeholder="Preço">
+<button onclick="addBorda()">Adicionar borda</button>
 <ul id="listaBordas"></ul>
 
+<hr>
+
 <h2>Adicionais</h2>
-<input id="adicionalNome"><input id="adicionalPreco" type="number">
-<button onclick="addAdicional()">Adicionar</button>
+<input id="adicionalNome" placeholder="Nome do adicional">
+<input id="adicionalPreco" type="number" step="0.01" placeholder="Preço">
+<button onclick="addAdicional()">Adicionar adicional</button>
 <ul id="listaAdicionais"></ul>
 
+<hr>
+
 <h2>Bebidas</h2>
-<input id="bebidaNome"><input id="bebidaPreco" type="number">
-<button onclick="addBebida()">Adicionar</button>
+<input id="bebidaNome" placeholder="Nome da bebida">
+<input id="bebidaPreco" type="number" step="0.01" placeholder="Preço">
+<button onclick="addBebida()">Adicionar bebida</button>
 <ul id="listaBebidas"></ul>
 
-<button onclick="exportar()">Exportar app.json</button>
+<hr>
+
+<button onclick="exportar()">📥 Exportar app.json</button>
 
 <script src="admin.js"></script>
 </body>
