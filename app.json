@@ -1,56 +1,55 @@
 {
   "config": {
     "lojaAberta": true,
-    "horario": "Fecha às 23:30",
+    "horario": "18:00 às 23:30",
     "tempoEntrega": "40–60 min",
+    "lojaLat": -16.6003112,
+    "lojaLng": -49.3847113,
     "kmGratis": 3,
     "valorKm": 2,
-    "limiteKm": 10,
-    "lojaLat": -16.6003112,
-    "lojaLng": -49.3847113
+    "limiteKm": 10
   },
-  "promocoes": [
-    "🔥 Alta demanda hoje – peça agora!",
-    "🍕 Últimas unidades disponíveis",
-    "🚀 Entrega rápida no seu bairro"
-  ],
-  "categorias": [
-    "Pizzas Tradicionais",
-    "Pizzas Especiais",
-    "Bebidas"
-  ],
+
+  "categorias": ["Pizzas"],
+
   "produtos": [
     {
-      "id": 1,
-      "categoria": "Pizzas Tradicionais",
-      "nome": "Calabresa",
-      "descricao": "Calabresa especial e cebola 😋",
-      "imagem": "https://via.placeholder.com/600x400",
-      "maisVendido": true,
-      "precos": { "P": 29.9, "M": 39.9, "G": 49.9 }
-    },
-    {
-      "id": 2,
-      "categoria": "Pizzas Tradicionais",
       "nome": "Mussarela",
+      "categoria": "Pizzas",
       "descricao": "Queijo derretido 🧀",
-      "imagem": "https://via.placeholder.com/600x400",
-      "maisVendido": false,
+      "imagem": "img/mussarela.jpg",
+      "maisVendido": true,
       "precos": { "P": 27.9, "M": 37.9, "G": 47.9 }
     },
     {
-      "id": 3,
-      "categoria": "Pizzas Especiais",
-      "nome": "Frango com Catupiry",
-      "descricao": "Frango + catupiry cremoso 🤍",
-      "imagem": "https://via.placeholder.com/600x400",
-      "maisVendido": true,
-      "precos": { "P": 34.9, "M": 44.9, "G": 54.9 }
+      "nome": "Calabresa",
+      "categoria": "Pizzas",
+      "descricao": "Calabresa fatiada com cebola",
+      "imagem": "img/calabresa.jpg",
+      "maisVendido": false,
+      "precos": { "P": 29.9, "M": 39.9, "G": 49.9 }
     }
   ],
-  "extras": [
-    { "id": 1, "nome": "Borda Catupiry", "preco": 7.9 },
-    { "id": 2, "nome": "Borda Cheddar", "preco": 7.9 },
-    { "id": 3, "nome": "Extra Bacon", "preco": 5.9 }
+
+  "bordas": [
+    { "nome": "Borda Catupiry", "preco": 7.9 },
+    { "nome": "Borda Cheddar", "preco": 7.9 }
+  ],
+
+  "adicionais": [
+    { "nome": "Extra Bacon", "preco": 5.9 },
+    { "nome": "Extra Queijo", "preco": 4.9 }
+  ],
+
+  "bebidas": [
+    { "nome": "Coca-Cola 2L", "preco": 12.0 },
+    { "nome": "Guaraná 1,5L", "preco": 10.0 },
+    { "nome": "Água", "preco": 4.0 }
+  ],
+
+  "promocoes": [
+    "🔥 Alta demanda hoje — peça agora!",
+    "🍕 Borda recheada por apenas R$ 7,90",
+    "🥤 Aproveite e leve uma bebida!"
   ]
 }
