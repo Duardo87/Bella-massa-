@@ -128,7 +128,6 @@ function removerExtra(i) {
 // STORAGE
 // =========================
 function salvar() {
-  salvarConfig();
   localStorage.setItem("appData", JSON.stringify(data));
   alert("Salvo com sucesso!");
 }
