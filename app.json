@@ -1,64 +1,106 @@
 {
-  "store": {
-    "name": "Bella Massa",
-    "whatsapp": "62993343622",
-    "openTime": "18:30",
-    "closeTime": "23:59",
-    "delivery": {
-      "lat": -16.600372,
-      "lng": -49.385028,
-      "freeKm": 3,
-      "pricePerKm": 2
-    },
-    "estimatedTime": "40-55 min",
-    "address": "Rua Flores das Paineiras - Flores do Cerrado"
+  "config": {
+    "lojaAberta": true,
+    "horario": "Fecha às 23:30",
+    "tempoEntrega": "40–60 min",
+    "kmGratis": 3,
+    "valorKm": 2,
+    "limiteKm": 10,
+    "lojaLat": -16.600372,
+    "lojaLng": -49.385028
   },
 
-  "sizes": {
-    "Pequena": 35,
-    "Média": 45,
-    "Grande": 55
+  "promocoes": [
+    "🔥 Promoção do Dia – peça agora!",
+    "🍕 Últimas unidades hoje",
+    "🚀 Entrega rápida no seu bairro"
+  ],
+
+  "promocoesSemana": {
+    "domingo": "🍕 Domingo em família – peça agora",
+    "segunda": "🔥 Segunda da pizza grande",
+    "terca": "😋 Terça especial Bella Massa",
+    "quarta": "🍕 Quarta não é dia de cozinhar",
+    "quinta": "🚀 Quinta com entrega rápida",
+    "sexta": "🔥 Sextou com pizza!",
+    "sabado": "🍕 Sábado combina com Bella Massa"
   },
 
-  "borders": [
-    { "name": "Catupiry", "price": 5 },
-    { "name": "Cheddar", "price": 5 }
+  "categorias": [
+    "Pizzas Tradicionais",
+    "Pizzas Especiais",
+    "Combos Bella Massa",
+    "Bebidas"
   ],
 
-  "additionals": [
-    { "name": "Bacon", "price": 6 },
-    { "name": "Calabresa", "price": 5 }
-  ],
-
-  "pizzas": [
+  "produtos": [
     {
       "id": 1,
-      "name": "Calabresa",
-      "description": "Calabresa, cebola e orégano",
-      "image": "https://via.placeholder.com/300"
+      "categoria": "Pizzas Tradicionais",
+      "nome": "Calabresa",
+      "descricao": "Calabresa especial, cebola roxa e muito sabor 😋",
+      "imagem": "https://via.placeholder.com/600x400",
+      "maisVendido": true,
+      "precos": {
+        "P": 29.9,
+        "M": 39.9,
+        "G": 49.9
+      }
     },
     {
       "id": 2,
-      "name": "Frango com Catupiry",
-      "description": "Frango desfiado com catupiry",
-      "image": "https://via.placeholder.com/300"
-    }
-  ],
-
-  "combos": [
+      "categoria": "Pizzas Tradicionais",
+      "nome": "Mussarela",
+      "descricao": "Queijo derretido e massa artesanal 🧀",
+      "imagem": "https://via.placeholder.com/600x400",
+      "maisVendido": false,
+      "precos": {
+        "P": 27.9,
+        "M": 37.9,
+        "G": 47.9
+      }
+    },
     {
-      "name": "Combo Família",
-      "description": "1 Pizza Grande + Refrigerante 2L",
-      "price": 69.9
+      "id": 3,
+      "categoria": "Pizzas Especiais",
+      "nome": "Frango com Catupiry",
+      "descricao": "Frango temperado + catupiry cremoso 🤍",
+      "imagem": "https://via.placeholder.com/600x400",
+      "maisVendido": true,
+      "precos": {
+        "P": 34.9,
+        "M": 44.9,
+        "G": 54.9
+      }
     }
   ],
 
-  "drinks": [
-    { "name": "Guaraná 2L", "price": 10 }
+  "extras": [
+    {
+      "id": 1,
+      "nome": "Borda Recheada Catupiry",
+      "preco": 7.9
+    },
+    {
+      "id": 2,
+      "nome": "Borda Cheddar",
+      "preco": 7.9
+    },
+    {
+      "id": 3,
+      "nome": "Extra Bacon",
+      "preco": 5.9
+    }
   ],
 
-  "promotions": {
-    "monday": "Borda grátis nas pizzas grandes",
-    "wednesday": "Pizza média por R$39,90"
-  }
+  "bebidas": [
+    {
+      "nome": "Coca-Cola 2L",
+      "preco": 12.0
+    },
+    {
+      "nome": "Guaraná 1,5L",
+      "preco": 10.0
+    }
+  ]
 }
