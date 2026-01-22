@@ -1,117 +1,83 @@
-<!-- =========================
-index.html – BELLA MASSA DELIVERY (PREMIUM CRO)
-========================= -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bella Massa 🍕 Delivery</title>
+  <title>Bella Massa 🍕</title>
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="top">
   <div class="logo">Bella Massa 🍕</div>
-
   <div class="status">
     <span id="statusLoja" class="open">ABERTO AGORA</span>
-    <span id="horario">Fecha às 23:30</span>
+    <span id="horario"></span>
   </div>
-
   <div class="info">
-    <span id="tempoEntrega">⏱ 40–60 min</span>
+    <span id="tempoEntrega"></span>
     <span>📍 Flores do Cerrado – Goiânia</span>
   </div>
 </header>
 
-<!-- CARROSSEL PROMO -->
 <section class="carousel" id="carousel"></section>
 
-<!-- FRASE URGÊNCIA -->
-<div class="urgencia">
-  🔥 Alta demanda hoje — garanta sua pizza agora!
-</div>
+<div class="urgencia">🔥 Hoje está movimentado — peça agora!</div>
 
-<!-- CATEGORIAS -->
 <nav class="categorias" id="categorias"></nav>
-
-<!-- PRODUTOS -->
 <main id="produtos"></main>
 
-<!-- BOTÃO FIXO WHATSAPP -->
-<a href="javascript:void(0)" id="btnWhats" class="btn-whats">
-  🍕 PEDIR NO WHATSAPP
-</a>
+<a href="#" id="btnWhats" class="btn-whats">🍕 PEDIR AGORA</a>
 
-<!-- BOTÃO CARRINHO -->
 <div class="cart-btn" id="openCart">
   🛒 Carrinho (<span id="cartQtd">0</span>)
 </div>
 
-<!-- CARRINHO -->
 <div class="cart" id="cart">
   <h2>🛒 Seu Pedido</h2>
-
   <div id="cartItems"></div>
+
+  <input id="endereco" placeholder="Endereço completo"/>
+  <textarea id="obsGeral" placeholder="Observações gerais"></textarea>
 
   <div class="resumo">
     <div><span>Subtotal</span><span id="subtotal">R$ 0,00</span></div>
-    <div><span>Bordas & Adicionais</span><span id="extras">R$ 0,00</span></div>
-    <div><span>Taxa de entrega</span><span id="taxa">R$ 0,00</span></div>
+    <div><span>Extras</span><span id="extras">R$ 0,00</span></div>
+    <div><span>Taxa</span><span id="taxa">R$ 0,00</span></div>
     <div class="total-final"><span>Total</span><span id="cartTotal">R$ 0,00</span></div>
   </div>
 
-  <textarea id="obsGeral" placeholder="Observações gerais do pedido..."></textarea>
-
   <button id="finalizar">FINALIZAR NO WHATSAPP</button>
-
-  <p class="upsell">
-    😍 Que tal adicionar uma <strong>borda recheada</strong>?
-  </p>
 </div>
 
-<!-- MODAL PIZZA -->
 <div class="modal" id="pizzaModal">
   <div class="modal-content">
-
     <span class="close" id="closeModal">&times;</span>
-
     <h2 id="modalNome"></h2>
     <p id="modalDesc"></p>
 
-    <!-- TAMANHO -->
     <div class="modal-section">
-      <h3>📏 Escolha o tamanho</h3>
+      <h3>Tamanho</h3>
       <div class="opcoes" id="tamanhos"></div>
     </div>
 
-    <!-- SABORES -->
     <div class="modal-section">
-      <h3>🍕 Escolha até 2 sabores</h3>
-      <p class="aviso">
-        🍕 Meio a meio calculado pelo <strong>maior valor</strong>
-      </p>
+      <h3>Sabores (até 2)</h3>
+      <p class="aviso">🍕 Meio a meio pelo maior valor</p>
       <div class="sabores" id="sabores"></div>
     </div>
 
-    <!-- BORDAS -->
     <div class="modal-section">
-      <h3>🧀 Bordas & Adicionais</h3>
+      <h3>Bordas & Adicionais</h3>
       <div class="extras" id="extrasModal"></div>
     </div>
 
-    <!-- OBS ITEM -->
-    <textarea id="obsItem" placeholder="Observação para esta pizza..."></textarea>
+    <textarea id="obsItem" placeholder="Observação da pizza"></textarea>
 
     <div class="modal-footer">
-      <span class="modal-total">
-        Total: R$ <strong id="modalTotal">0,00</strong>
-      </span>
-      <button id="addPizza">Adicionar ao carrinho</button>
+      <strong>Total: R$ <span id="modalTotal">0,00</span></strong>
+      <button id="addPizza">Adicionar</button>
     </div>
-
   </div>
 </div>
 

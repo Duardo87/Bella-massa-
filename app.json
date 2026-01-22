@@ -6,101 +6,51 @@
     "kmGratis": 3,
     "valorKm": 2,
     "limiteKm": 10,
-    "lojaLat": -16.600372,
-    "lojaLng": -49.385028
+    "lojaLat": -16.6003112,
+    "lojaLng": -49.3847113
   },
-
   "promocoes": [
-    "🔥 Promoção do Dia – peça agora!",
-    "🍕 Últimas unidades hoje",
+    "🔥 Alta demanda hoje – peça agora!",
+    "🍕 Últimas unidades disponíveis",
     "🚀 Entrega rápida no seu bairro"
   ],
-
-  "promocoesSemana": {
-    "domingo": "🍕 Domingo em família – peça agora",
-    "segunda": "🔥 Segunda da pizza grande",
-    "terca": "😋 Terça especial Bella Massa",
-    "quarta": "🍕 Quarta não é dia de cozinhar",
-    "quinta": "🚀 Quinta com entrega rápida",
-    "sexta": "🔥 Sextou com pizza!",
-    "sabado": "🍕 Sábado combina com Bella Massa"
-  },
-
   "categorias": [
     "Pizzas Tradicionais",
     "Pizzas Especiais",
-    "Combos Bella Massa",
     "Bebidas"
   ],
-
   "produtos": [
     {
       "id": 1,
       "categoria": "Pizzas Tradicionais",
       "nome": "Calabresa",
-      "descricao": "Calabresa especial, cebola roxa e muito sabor 😋",
+      "descricao": "Calabresa especial e cebola 😋",
       "imagem": "https://via.placeholder.com/600x400",
       "maisVendido": true,
-      "precos": {
-        "P": 29.9,
-        "M": 39.9,
-        "G": 49.9
-      }
+      "precos": { "P": 29.9, "M": 39.9, "G": 49.9 }
     },
     {
       "id": 2,
       "categoria": "Pizzas Tradicionais",
       "nome": "Mussarela",
-      "descricao": "Queijo derretido e massa artesanal 🧀",
+      "descricao": "Queijo derretido 🧀",
       "imagem": "https://via.placeholder.com/600x400",
       "maisVendido": false,
-      "precos": {
-        "P": 27.9,
-        "M": 37.9,
-        "G": 47.9
-      }
+      "precos": { "P": 27.9, "M": 37.9, "G": 47.9 }
     },
     {
       "id": 3,
       "categoria": "Pizzas Especiais",
       "nome": "Frango com Catupiry",
-      "descricao": "Frango temperado + catupiry cremoso 🤍",
+      "descricao": "Frango + catupiry cremoso 🤍",
       "imagem": "https://via.placeholder.com/600x400",
       "maisVendido": true,
-      "precos": {
-        "P": 34.9,
-        "M": 44.9,
-        "G": 54.9
-      }
+      "precos": { "P": 34.9, "M": 44.9, "G": 54.9 }
     }
   ],
-
   "extras": [
-    {
-      "id": 1,
-      "nome": "Borda Recheada Catupiry",
-      "preco": 7.9
-    },
-    {
-      "id": 2,
-      "nome": "Borda Cheddar",
-      "preco": 7.9
-    },
-    {
-      "id": 3,
-      "nome": "Extra Bacon",
-      "preco": 5.9
-    }
-  ],
-
-  "bebidas": [
-    {
-      "nome": "Coca-Cola 2L",
-      "preco": 12.0
-    },
-    {
-      "nome": "Guaraná 1,5L",
-      "preco": 10.0
-    }
+    { "id": 1, "nome": "Borda Catupiry", "preco": 7.9 },
+    { "id": 2, "nome": "Borda Cheddar", "preco": 7.9 },
+    { "id": 3, "nome": "Extra Bacon", "preco": 5.9 }
   ]
 }
