@@ -2,47 +2,31 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Admin • Bella Massa</title>
+  <title>Admin Bella Massa</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<h1>Admin • Bella Massa</h1>
+<h1>Admin Bella Massa</h1>
 
-<h2>Configurações da Loja</h2>
 <label><input type="checkbox" id="lojaAberta"> Loja aberta</label><br>
 <input id="horario" placeholder="Horário">
-<input id="tempoEntrega" placeholder="Tempo de entrega"><br>
-<input id="kmGratis" type="number" placeholder="KM grátis">
-<input id="valorKm" type="number" placeholder="Valor por KM">
-<input id="limiteKm" type="number" placeholder="Limite KM"><br>
-
-<hr>
+<input id="tempoEntrega" placeholder="Tempo de entrega">
 
 <h2>Bordas</h2>
-<input id="bordaNome" placeholder="Nome da borda">
-<input id="bordaPreco" type="number" step="0.01" placeholder="Preço">
+<input id="bordaNome"><input id="bordaPreco" type="number">
 <button onclick="addBorda()">Adicionar</button>
 <ul id="listaBordas"></ul>
 
-<hr>
-
 <h2>Adicionais</h2>
-<input id="adicionalNome" placeholder="Nome do adicional">
-<input id="adicionalPreco" type="number" step="0.01" placeholder="Preço">
+<input id="adicionalNome"><input id="adicionalPreco" type="number">
 <button onclick="addAdicional()">Adicionar</button>
 <ul id="listaAdicionais"></ul>
 
-<hr>
-
 <h2>Bebidas</h2>
-<input id="bebidaNome" placeholder="Nome da bebida">
-<input id="bebidaPreco" type="number" step="0.01" placeholder="Preço">
+<input id="bebidaNome"><input id="bebidaPreco" type="number">
 <button onclick="addBebida()">Adicionar</button>
 <ul id="listaBebidas"></ul>
-
-<hr>
 
 <button onclick="exportar()">Exportar app.json</button>
 
