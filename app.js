@@ -1,5 +1,19 @@
+/**************************************************
+ * app.js – BELLA MASSA (VERSÃO FINAL ESTÁVEL)
+ * Ajustes:
+ * ✔ Taxa por KM funcionando
+ * ✔ Até 3km grátis
+ * ✔ R$2,00 por KM excedente
+ * ✔ Bloqueio fora do raio
+ * ✔ Fallback seguro de geolocalização
+ **************************************************/
+
 const WHATSAPP = "62993343622";
 const R = 6371;
+
+// 📍 LOCALIZAÇÃO FIXA DA LOJA
+const LOJA_LAT = -16.6001442;
+const LOJA_LNG = -49.3848331;
 
 // ================= DOM =================
 const statusLoja = document.getElementById("statusLoja");
@@ -37,8 +51,9 @@ let data = {};
 let config = {};
 let carrinho = [];
 let produtoAtual = null;
-let selecao = { tamanho:null, sabores:[], extras:[], obs:"" };
+let selecao = { tamanho: null, sabores: [], extras: [], obs: "" };
 let taxaEntrega = 0;
+let foraDoRaio = false;
 
 // ================= INIT =================
 document.addEventListener("DOMContentLoaded", init);
@@ -46,7 +61,15 @@ document.addEventListener("DOMContentLoaded", init);
 async function init() {
   data = JSON.parse(localStorage.getItem("appData")) ||
          await (await fetch("app.json")).json();
-  config = data.config;
+
+  config = data.config || {
+    kmGratis: 3,
+    valorKm: 2,
+    limiteKm: 10,
+    lojaAberta: true,
+    horario: "",
+    tempoEntrega: ""
+  };
 
   atualizarHeader();
   renderCarousel();
@@ -58,16 +81,16 @@ async function init() {
 // ================= HEADER =================
 function atualizarHeader() {
   statusLoja.innerText = config.lojaAberta ? "ABERTO AGORA" : "FECHADO";
-  horario.innerText = config.horario;
-  tempoEntrega.innerText = `⏱ ${config.tempoEntrega}`;
+  horario.innerText = config.horario || "";
+  tempoEntrega.innerText = `⏱ ${config.tempoEntrega || ""}`;
 }
 
-// ================= PROMO =================
+// ================= PROMOÇÕES =================
 function renderCarousel() {
   carousel.innerHTML = "";
-  data.promocoes.forEach(p => {
+  (data.promocoes || []).forEach(p => {
     const d = document.createElement("div");
-    d.innerText = p;
+    d.innerText = typeof p === "string" ? p : p.texto;
     carousel.appendChild(d);
   });
 }
@@ -75,7 +98,7 @@ function renderCarousel() {
 // ================= CATEGORIAS =================
 function renderCategorias() {
   categorias.innerHTML = "";
-  data.categorias.forEach(c => {
+  (data.categorias || []).forEach(c => {
     const b = document.createElement("button");
     b.innerText = c;
     b.onclick = () => renderProdutos(c);
@@ -86,29 +109,31 @@ function renderCategorias() {
 // ================= PRODUTOS =================
 function renderProdutos(cat) {
   produtos.innerHTML = "";
-  data.produtos.filter(p => !cat || p.categoria === cat).forEach(p => {
-    const d = document.createElement("div");
-    d.className = "produto";
-    d.innerHTML = `
-      <img src="${p.imagem}">
-      <div class="info">
-        <h3>${p.nome} ${p.maisVendido ? "🔥" : ""}</h3>
-        <p>${p.descricao}</p>
-        <p>A partir de R$ ${p.precos.P.toFixed(2)}</p>
-      </div>
-      <button>Adicionar</button>
-    `;
-    d.querySelector("button").onclick = () => abrirModal(p);
-    produtos.appendChild(d);
-  });
+  (data.produtos || [])
+    .filter(p => !cat || p.categoria === cat)
+    .forEach(p => {
+      const d = document.createElement("div");
+      d.className = "produto";
+      d.innerHTML = `
+        <img src="${p.imagem}">
+        <div class="info">
+          <h3>${p.nome} ${p.maisVendido ? "🔥" : ""}</h3>
+          <p>${p.descricao || ""}</p>
+          <p>A partir de R$ ${Number(p.precos.P).toFixed(2)}</p>
+        </div>
+        <button>Adicionar</button>
+      `;
+      d.querySelector("button").onclick = () => abrirModal(p);
+      produtos.appendChild(d);
+    });
 }
 
 // ================= MODAL =================
 function abrirModal(p) {
   produtoAtual = p;
-  selecao = { tamanho:null, sabores:[], extras:[], obs:"" };
+  selecao = { tamanho: null, sabores: [], extras: [], obs: "" };
   modalNome.innerText = p.nome;
-  modalDesc.innerText = p.descricao;
+  modalDesc.innerText = p.descricao || "";
   obsItem.value = "";
   renderTamanhos();
   renderSabores();
@@ -122,9 +147,9 @@ closeModal.onclick = () => pizzaModal.style.display = "none";
 // ================= TAMANHOS =================
 function renderTamanhos() {
   tamanhos.innerHTML = "";
-  Object.keys(produtoAtual.precos).forEach(t => {
+  Object.keys(produtoAtual.precos || {}).forEach(t => {
     const b = document.createElement("button");
-    b.innerText = `${t} R$ ${produtoAtual.precos[t].toFixed(2)}`;
+    b.innerText = `${t} R$ ${Number(produtoAtual.precos[t]).toFixed(2)}`;
     b.onclick = () => {
       selecao.tamanho = t;
       atualizarTotalModal();
@@ -136,7 +161,7 @@ function renderTamanhos() {
 // ================= SABORES =================
 function renderSabores() {
   sabores.innerHTML = "";
-  data.produtos.forEach(s => {
+  (data.produtos || []).forEach(s => {
     const b = document.createElement("button");
     b.innerText = s.nome;
     b.onclick = () => {
@@ -154,10 +179,16 @@ function renderSabores() {
 // ================= EXTRAS =================
 function renderExtras() {
   extrasModal.innerHTML = "";
-  const lista = [].concat(data.bordas, data.adicionais, data.bebidas);
+  const lista = []
+    .concat(data.extras || [])
+    .concat(data.bordas || [])
+    .concat(data.adicionais || [])
+    .concat(data.bebidas || []);
+
   lista.forEach(e => {
+    if (!e || e.preco == null) return;
     const b = document.createElement("button");
-    b.innerText = `${e.nome} +R$ ${e.preco.toFixed(2)}`;
+    b.innerText = `${e.nome} +R$ ${Number(e.preco).toFixed(2)}`;
     b.onclick = () => {
       selecao.extras.includes(e)
         ? selecao.extras = selecao.extras.filter(x => x !== e)
@@ -168,7 +199,7 @@ function renderExtras() {
   });
 }
 
-// ================= TOTAL =================
+// ================= TOTAL MODAL =================
 function atualizarTotalModal() {
   if (!selecao.tamanho || !selecao.sabores.length) {
     modalTotal.innerText = "0,00";
@@ -179,7 +210,7 @@ function atualizarTotalModal() {
   modalTotal.innerText = total.toFixed(2);
 }
 
-// ================= ADD =================
+// ================= ADD CARRINHO =================
 addPizza.onclick = () => {
   carrinho.push({
     nome: produtoAtual.nome,
@@ -193,7 +224,7 @@ addPizza.onclick = () => {
   atualizarCarrinho();
 };
 
-// ================= TAXA =================
+// ================= DISTÂNCIA =================
 function haversine(lat1, lon1, lat2, lon2) {
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -205,10 +236,11 @@ function haversine(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// ================= CARRINHO =================
+// ================= CARRINHO + TAXA =================
 function atualizarCarrinho() {
   cartItems.innerHTML = "";
   let subtotal = 0;
+  foraDoRaio = false;
 
   carrinho.forEach(i => {
     subtotal += i.preco;
@@ -222,27 +254,37 @@ function atualizarCarrinho() {
     `;
   });
 
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
+  if (!navigator.geolocation) {
+    taxaEntrega = 0;
+    atualizarTotais(subtotal);
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
       const km = haversine(
-        config.lojaLat,
-        config.lojaLng,
+        LOJA_LAT,
+        LOJA_LNG,
         pos.coords.latitude,
         pos.coords.longitude
       );
 
       if (km > config.limiteKm) {
-        alert("Fora da área de entrega");
+        foraDoRaio = true;
         taxaEntrega = 0;
+        alert("🚫 Fora da área de entrega");
       } else {
-        taxaEntrega = km <= config.kmGratis ? 0 : (km - config.kmGratis) * config.valorKm;
+        taxaEntrega =
+          km <= 3 ? 0 : Math.max(0, (km - 3) * 2);
       }
 
       atualizarTotais(subtotal);
-    });
-  } else {
-    atualizarTotais(subtotal);
-  }
+    },
+    () => {
+      taxaEntrega = 0;
+      atualizarTotais(subtotal);
+    }
+  );
 }
 
 function atualizarTotais(subtotal) {
@@ -263,6 +305,7 @@ function bindEventos() {
 
   finalizar.onclick = () => {
     if (!carrinho.length) return alert("Carrinho vazio");
+    if (foraDoRaio) return alert("Endereço fora da área de entrega");
     if (!endereco.value.trim()) return alert("Informe o endereço");
 
     let msg = "🍕 *Pedido Bella Massa* 🍕\n\n";
@@ -272,7 +315,11 @@ function bindEventos() {
       msg += `R$ ${i.preco.toFixed(2)}\n\n`;
     });
 
-    if (obsGeral.value) msg += `📝 Obs geral: ${obsGeral.value}\n`;
+    if (obsGeral.value.trim()) {
+      msg += `📝 Obs geral: ${obsGeral.value}\n`;
+    }
+
+    msg += `🚚 Taxa: R$ ${taxaEntrega.toFixed(2)}\n`;
     msg += `📍 Endereço: ${endereco.value}\n`;
     msg += `💰 Total: ${cartTotal.innerText}`;
 
