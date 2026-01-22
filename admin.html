@@ -1,81 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin • Bella Massa</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 16px;
-      max-width: 700px;
-      margin: auto;
-    }
-    h1, h2 {
-      margin-top: 24px;
-    }
-    input, button {
-      width: 100%;
-      padding: 8px;
-      margin: 4px 0;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-      border-bottom: 1px solid #ddd;
-    }
-    button.remover {
-      background: #e53935;
-      color: #fff;
-      border: none;
-      padding: 4px 8px;
-    }
-  </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Bella Massa</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 
-<h1>Admin • Bella Massa 🍕</h1>
+<div class="admin">
+  <h2>🍕 Admin Bella Massa</h2>
 
-<h2>Configurações da Loja</h2>
-<label>
-  <input type="checkbox" id="lojaAberta"> Loja aberta
-</label>
-<input id="horario" placeholder="Horário de funcionamento">
-<input id="tempoEntrega" placeholder="Tempo de entrega">
+  <div class="card">
+    <h3>Status da Loja</h3>
+    <select id="lojaAberta">
+      <option value="true">Aberta</option>
+      <option value="false">Fechada</option>
+    </select>
+    <input id="horario" placeholder="Horário">
+    <input id="tempoEntrega" placeholder="Tempo de entrega">
+  </div>
 
-<hr>
+  <div class="card">
+    <h3>Taxa de Entrega</h3>
+    <input id="kmGratis" placeholder="KM grátis">
+    <input id="valorKm" placeholder="Valor por KM">
+    <input id="limiteKm" placeholder="Limite KM">
+  </div>
 
-<h2>Bordas</h2>
-<input id="bordaNome" placeholder="Nome da borda">
-<input id="bordaPreco" type="number" step="0.01" placeholder="Preço">
-<button onclick="addBorda()">Adicionar borda</button>
-<ul id="listaBordas"></ul>
+  <div class="card">
+    <h3>Produtos</h3>
+    <input id="prodNome" placeholder="Nome">
+    <input id="prodCategoria" placeholder="Categoria">
+    <input id="prodPrecoP" placeholder="Preço P">
+    <input id="prodPrecoM" placeholder="Preço M">
+    <input id="prodPrecoG" placeholder="Preço G">
+    <input id="prodImagem" placeholder="Imagem URL">
+    <button onclick="addProduto()">Adicionar</button>
+    <div id="listaProdutos"></div>
+  </div>
 
-<hr>
+  <div class="card">
+    <h3>Extras</h3>
+    <input id="extraNome" placeholder="Nome">
+    <input id="extraPreco" placeholder="Preço">
+    <button onclick="addExtra()">Adicionar</button>
+    <div id="listaExtras"></div>
+  </div>
 
-<h2>Adicionais</h2>
-<input id="adicionalNome" placeholder="Nome do adicional">
-<input id="adicionalPreco" type="number" step="0.01" placeholder="Preço">
-<button onclick="addAdicional()">Adicionar adicional</button>
-<ul id="listaAdicionais"></ul>
-
-<hr>
-
-<h2>Bebidas</h2>
-<input id="bebidaNome" placeholder="Nome da bebida">
-<input id="bebidaPreco" type="number" step="0.01" placeholder="Preço">
-<button onclick="addBebida()">Adicionar bebida</button>
-<ul id="listaBebidas"></ul>
-
-<hr>
-
-<button onclick="exportar()">📥 Exportar app.json</button>
+  <button onclick="exportar()">Exportar app.json</button>
+  <input type="file" onchange="importar(event)">
+</div>
 
 <script src="admin.js"></script>
 </body>
