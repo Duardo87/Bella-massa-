@@ -14,7 +14,7 @@
     "meioAMeio": {
       "ativo": true,
       "limiteSabores": 2,
-      "aviso": "⚠️ Pizza meio a meio será cobrada pelo sabor de maior valor"
+      "aviso": ""
     }
   },
   "categorias": [
@@ -23,11 +23,11 @@
       "ativo": true
     },
     {
-      "nome": "Pizzas",
+      "nome": "Bebidas",
       "ativo": true
     },
     {
-      "nome": "Bebidas",
+      "nome": "Pizzas",
       "ativo": true
     }
   ],
