@@ -17,7 +17,11 @@
       "aviso": "⚠️ Pizza meio a meio será cobrada pelo sabor de maior valor"
     }
   },
-  "categorias": ["Ofertas","Pizzas","Bebidas"],
+  "categorias": [
+    { "nome": "Ofertas", "ativo": true },
+    { "nome": "Pizzas", "ativo": true },
+    { "nome": "Bebidas", "ativo": true }
+  ],
   "ofertas": [
     { "nome": "🔥 Combo Campeão", "descricao": "Pizza Grande + Refrigerante 2L", "preco": 54.9 },
     { "nome": "😍 Combo Casal", "descricao": "Pizza Média + Refrigerante 1,5L", "preco": 44.9 }
@@ -29,7 +33,8 @@
       "descricao": "Queijo mussarela derretido 🧀",
       "imagem": "img/mussarela.jpg",
       "maisVendido": true,
-      "precos": { "P": 35, "M": 45, "G": 55 }
+      "precos": { "P": 35, "M": 45, "G": 55 },
+      "ativo": true
     },
     {
       "nome": "Calabresa",
@@ -37,7 +42,8 @@
       "descricao": "Calabresa fatiada com cebola",
       "imagem": "img/calabresa.jpg",
       "maisVendido": true,
-      "precos": { "P": 35, "M": 45, "G": 55 }
+      "precos": { "P": 35, "M": 45, "G": 55 },
+      "ativo": true
     }
   ],
   "bordas": [

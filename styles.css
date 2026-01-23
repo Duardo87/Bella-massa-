@@ -1,4 +1,4 @@
-/* styles.css */
+/* styles.css (mantido + pequenas classes usadas pelo admin) */
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif}
 body{background:#f4f6f5;color:#222}
 .top{background:linear-gradient(135deg,#0a7d45,#0fb36a);color:#fff;padding:16px}
@@ -34,3 +34,11 @@ main{padding:12px}
 .sabores button.disabled{opacity:.4;pointer-events:none}
 .aviso.limite{color:#e53935;font-weight:700;display:none}
 @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+
+/* pequenas classes úteis ao admin (reaproveitadas se admin usa o mesmo stylesheet) */
+.hidden{display:none}
+.small{padding:6px 8px;font-size:13px}
+.muted{color:#666;font-size:13px}
+.list{margin-top:8px}
+.list-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;border:1px solid #eee;margin-bottom:8px;background:#fafafa}
+.img-preview{width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid #ddd}
