@@ -2,85 +2,34 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bella Massa 🍕</title>
-  <link rel="stylesheet" href="styles.css"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bella Massa</title>
+<link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 
 <header class="top">
-  <div class="logo">Bella Massa 🍕</div>
-  <div class="status">
-    <span id="statusLoja" class="open"></span>
-    <span id="horario"></span>
-  </div>
-  <div class="info">
-    <span id="tempoEntrega"></span>
-    <span>📍 Flores do Cerrado – Goiânia</span>
-  </div>
+  <div class="logo" id="nome"></div>
+  <span id="status"></span>
 </header>
 
-<section class="carousel" id="carousel"></section>
-<div class="urgencia" id="promoDia"></div>
-
-<nav class="categorias" id="categorias"></nav>
+<nav id="categorias"></nav>
 <main id="produtos"></main>
 
-<a href="#" id="btnWhats" class="btn-whats">🍕 PEDIR AGORA</a>
-
-<div class="cart-btn" id="openCart">
-  🛒 Carrinho (<span id="cartQtd">0</span>)
-</div>
+<div class="cart-btn" id="openCart">🛒 (<span id="qtd">0</span>)</div>
 
 <div class="cart" id="cart">
-  <h2>🛒 Seu Pedido</h2>
-  <div id="cartItems"></div>
+  <div id="items"></div>
 
   <input id="endereco" placeholder="Endereço completo"/>
-  <textarea id="obsGeral" placeholder="Observações gerais"></textarea>
+  <textarea id="obs" placeholder="Observações"></textarea>
 
-  <div class="upsell" id="upsell"></div>
+  <p>Subtotal: <span id="subtotal">R$ 0,00</span></p>
+  <p>Taxa: <span id="taxa">R$ 0,00</span></p>
+  <strong>Total: <span id="total">R$ 0,00</span></strong>
 
-  <div class="resumo">
-    <div><span>Subtotal</span><span id="subtotal">R$ 0,00</span></div>
-    <div><span>Taxa</span><span id="taxa">R$ 0,00</span></div>
-    <div class="total-final"><span>Total</span><span id="cartTotal">R$ 0,00</span></div>
-  </div>
-
-  <button id="finalizar">FINALIZAR NO WHATSAPP</button>
-</div>
-
-<div class="modal" id="pizzaModal">
-  <div class="modal-content">
-    <span class="close" id="closeModal">&times;</span>
-    <h2 id="modalNome"></h2>
-    <p id="modalDesc"></p>
-
-    <div class="modal-section">
-      <h3>Tamanho</h3>
-      <div class="opcoes" id="tamanhos"></div>
-    </div>
-
-    <div class="modal-section">
-      <h3>Sabores (até 2)</h3>
-      <p class="aviso" id="avisoMeio"></p>
-      <p class="aviso limite" id="avisoLimite"></p>
-      <div class="sabores" id="sabores"></div>
-    </div>
-
-    <div class="modal-section">
-      <h3>Bordas e Adicionais</h3>
-      <div class="extras" id="extrasModal"></div>
-    </div>
-
-    <textarea id="obsItem" placeholder="Observação da pizza"></textarea>
-
-    <div class="modal-footer">
-      <strong>Total: R$ <span id="modalTotal">0,00</span></strong>
-      <button id="addPizza">Adicionar</button>
-    </div>
-  </div>
+  <button id="finalizar">Finalizar</button>
 </div>
 
 <script src="app.js"></script>

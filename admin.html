@@ -2,32 +2,44 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Bella Massa</title>
-  <link rel="stylesheet" href="styles.css"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Bella Massa</title>
+<link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-<div class="admin">
-  <h2>🍕 Admin Bella Massa</h2>
-  <div class="card">
-    <h3>Status da Loja</h3>
-    <select id="lojaAberta"><option value="true">Aberta</option><option value="false">Fechada</option></select>
-    <input id="horario" placeholder="Horário">
-    <input id="tempoEntrega" placeholder="Tempo entrega">
-  </div>
-  <div class="card">
-    <h3>Taxa</h3>
-    <input id="kmGratis" placeholder="KM grátis">
-    <input id="valorKm" placeholder="Valor KM">
-    <input id="limiteKm" placeholder="Limite KM">
-  </div>
-  <div class="card">
-    <h3>Backup</h3>
-    <button onclick="exportar()">Exportar</button>
-    <input type="file" onchange="importar(event)">
-  </div>
+
+<div id="login">
+  <h2>Login Admin</h2>
+  <input id="senha" type="password" placeholder="Senha"/>
+  <button onclick="login()">Entrar</button>
 </div>
+
+<div id="admin" style="display:none">
+  <h2>Administração</h2>
+
+  <input id="nomePizzaria" placeholder="Nome da pizzaria"/>
+  <input id="whatsapp" placeholder="WhatsApp"/>
+  <input id="pedidoMinimo" type="number" placeholder="Pedido mínimo"/>
+
+  <h3>Entrega</h3>
+  <input id="kmGratis" type="number" placeholder="KM grátis"/>
+  <input id="valorKm" type="number" placeholder="Valor por KM"/>
+  <input id="limiteKm" type="number" placeholder="Limite máximo KM"/>
+
+  <h3>Novo Produto</h3>
+  <input id="prodNome" placeholder="Nome"/>
+  <input id="prodPreco" type="number" placeholder="Preço"/>
+  <select id="prodCategoria"></select>
+  <input id="prodImg" type="file"/>
+  <button onclick="addProduto()">Adicionar Produto</button>
+
+  <h3>Produtos</h3>
+  <div id="listaProdutos"></div>
+
+  <button onclick="salvar()">Salvar Tudo</button>
+</div>
+
 <script src="admin.js"></script>
 </body>
 </html>
