@@ -1,3 +1,4 @@
+<!-- index.html (FINAL) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -11,7 +12,7 @@
 <header class="top">
   <div class="logo">Bella Massa 🍕</div>
   <div class="status">
-    <span id="statusLoja" class="open">ABERTO AGORA</span>
+    <span id="statusLoja" class="open"></span>
     <span id="horario"></span>
   </div>
   <div class="info">
@@ -21,7 +22,7 @@
 </header>
 
 <section class="carousel" id="carousel"></section>
-<div class="urgencia">🔥 Hoje está movimentado — peça agora!</div>
+<div class="urgencia" id="promoDia"></div>
 
 <nav class="categorias" id="categorias"></nav>
 <main id="produtos"></main>
@@ -38,6 +39,8 @@
 
   <input id="endereco" placeholder="Endereço completo"/>
   <textarea id="obsGeral" placeholder="Observações gerais"></textarea>
+
+  <div class="upsell" id="upsell"></div>
 
   <div class="resumo">
     <div><span>Subtotal</span><span id="subtotal">R$ 0,00</span></div>
@@ -61,7 +64,7 @@
 
     <div class="modal-section">
       <h3>Sabores (até 2)</h3>
-      <p class="aviso">🍕 Meio a meio pelo maior valor</p>
+      <p class="aviso" id="avisoMeio"></p>
       <div class="sabores" id="sabores"></div>
     </div>
 

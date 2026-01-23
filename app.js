@@ -1,328 +1,189 @@
-/**************************************************
- * app.js – BELLA MASSA (VERSÃO FINAL ESTÁVEL)
- * Ajustes:
- * ✔ Taxa por KM funcionando
- * ✔ Até 3km grátis
- * ✔ R$2,00 por KM excedente
- * ✔ Bloqueio fora do raio
- * ✔ Fallback seguro de geolocalização
- **************************************************/
+// app.js (FINAL CORRIGIDO)
+const R=6371;
+let data={},carrinho=[],produtoAtual=null,selecao={},taxaEntrega=0;
 
-const WHATSAPP = "62993343622";
-const R = 6371;
-
-// 📍 LOCALIZAÇÃO FIXA DA LOJA
-const LOJA_LAT = -16.6001442;
-const LOJA_LNG = -49.3848331;
-
-// ================= DOM =================
-const statusLoja = document.getElementById("statusLoja");
-const horario = document.getElementById("horario");
-const tempoEntrega = document.getElementById("tempoEntrega");
-const carousel = document.getElementById("carousel");
-const categorias = document.getElementById("categorias");
-const produtos = document.getElementById("produtos");
-
-const btnWhats = document.getElementById("btnWhats");
-const openCart = document.getElementById("openCart");
-const cart = document.getElementById("cart");
-const cartItems = document.getElementById("cartItems");
-const cartQtd = document.getElementById("cartQtd");
-const subtotalEl = document.getElementById("subtotal");
-const taxaEl = document.getElementById("taxa");
-const cartTotal = document.getElementById("cartTotal");
-const finalizar = document.getElementById("finalizar");
-const endereco = document.getElementById("endereco");
-const obsGeral = document.getElementById("obsGeral");
-
-const pizzaModal = document.getElementById("pizzaModal");
-const closeModal = document.getElementById("closeModal");
-const modalNome = document.getElementById("modalNome");
-const modalDesc = document.getElementById("modalDesc");
-const tamanhos = document.getElementById("tamanhos");
-const sabores = document.getElementById("sabores");
-const extrasModal = document.getElementById("extrasModal");
-const obsItem = document.getElementById("obsItem");
-const modalTotal = document.getElementById("modalTotal");
-const addPizza = document.getElementById("addPizza");
-
-// ================= STATE =================
-let data = {};
-let config = {};
-let carrinho = [];
-let produtoAtual = null;
-let selecao = { tamanho: null, sabores: [], extras: [], obs: "" };
-let taxaEntrega = 0;
-let foraDoRaio = false;
-
-// ================= INIT =================
-document.addEventListener("DOMContentLoaded", init);
-
-async function init() {
-  data = JSON.parse(localStorage.getItem("appData")) ||
-         await (await fetch("app.json")).json();
-
-  config = data.config || {
-    kmGratis: 3,
-    valorKm: 2,
-    limiteKm: 10,
-    lojaAberta: true,
-    horario: "",
-    tempoEntrega: ""
-  };
-
-  atualizarHeader();
+document.addEventListener("DOMContentLoaded",async()=>{
+  data=JSON.parse(localStorage.getItem("appData"))||await(await fetch("app.json")).json();
+  renderHeader();
   renderCarousel();
+  renderPromoDia();
   renderCategorias();
   renderProdutos();
   bindEventos();
+});
+
+function renderHeader(){
+  document.getElementById("statusLoja").innerText=data.config.lojaAberta?"ABERTO AGORA":"FECHADO";
+  document.getElementById("horario").innerText=data.config.horario;
+  document.getElementById("tempoEntrega").innerText=`⏱ ${data.config.tempoEntrega}`;
+  document.getElementById("avisoMeio").innerText=data.config.meioAMeio.aviso;
 }
 
-// ================= HEADER =================
-function atualizarHeader() {
-  statusLoja.innerText = config.lojaAberta ? "ABERTO AGORA" : "FECHADO";
-  horario.innerText = config.horario || "";
-  tempoEntrega.innerText = `⏱ ${config.tempoEntrega || ""}`;
+function renderCarousel(){
+  const c=document.getElementById("carousel");c.innerHTML="";
+  data.promocoes.forEach(p=>{const d=document.createElement("div");d.innerText=p;c.appendChild(d)});
 }
 
-// ================= PROMOÇÕES =================
-function renderCarousel() {
-  carousel.innerHTML = "";
-  (data.promocoes || []).forEach(p => {
-    const d = document.createElement("div");
-    d.innerText = typeof p === "string" ? p : p.texto;
-    carousel.appendChild(d);
-  });
+function renderPromoDia(){
+  const d=new Date().getDay();
+  const map=["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+  document.getElementById("promoDia").innerText=`🔥 Promoção de ${map[d]} ativa hoje!`;
 }
 
-// ================= CATEGORIAS =================
-function renderCategorias() {
-  categorias.innerHTML = "";
-  (data.categorias || []).forEach(c => {
-    const b = document.createElement("button");
-    b.innerText = c;
-    b.onclick = () => renderProdutos(c);
-    categorias.appendChild(b);
-  });
+function renderCategorias(){
+  const cat=document.getElementById("categorias");cat.innerHTML="";
+  data.categorias.forEach(c=>{const b=document.createElement("button");b.innerText=c;b.onclick=()=>renderProdutos(c);cat.appendChild(b)});
 }
 
-// ================= PRODUTOS =================
-function renderProdutos(cat) {
-  produtos.innerHTML = "";
-  (data.produtos || [])
-    .filter(p => !cat || p.categoria === cat)
-    .forEach(p => {
-      const d = document.createElement("div");
-      d.className = "produto";
-      d.innerHTML = `
-        <img src="${p.imagem}">
-        <div class="info">
-          <h3>${p.nome} ${p.maisVendido ? "🔥" : ""}</h3>
-          <p>${p.descricao || ""}</p>
-          <p>A partir de R$ ${Number(p.precos.P).toFixed(2)}</p>
-        </div>
-        <button>Adicionar</button>
-      `;
-      d.querySelector("button").onclick = () => abrirModal(p);
-      produtos.appendChild(d);
+function renderProdutos(cat){
+  const p=document.getElementById("produtos");p.innerHTML="";
+  if(cat==="Ofertas"){
+    data.ofertas.forEach(o=>{
+      const d=document.createElement("div");
+      d.className="produto";
+      d.innerHTML=`<div class="info"><h3>${o.nome}</h3><p>${o.descricao}</p><p><strong>R$ ${o.preco.toFixed(2)}</strong></p></div><button>Adicionar</button>`;
+      d.querySelector("button").onclick=()=>{
+        carrinho.push({tipo:"combo",nome:o.nome,descricao:o.descricao,preco:o.preco});
+        atualizarCarrinho();
+      };
+      p.appendChild(d);
     });
-}
-
-// ================= MODAL =================
-function abrirModal(p) {
-  produtoAtual = p;
-  selecao = { tamanho: null, sabores: [], extras: [], obs: "" };
-  modalNome.innerText = p.nome;
-  modalDesc.innerText = p.descricao || "";
-  obsItem.value = "";
-  renderTamanhos();
-  renderSabores();
-  renderExtras();
-  atualizarTotalModal();
-  pizzaModal.style.display = "flex";
-}
-
-closeModal.onclick = () => pizzaModal.style.display = "none";
-
-// ================= TAMANHOS =================
-function renderTamanhos() {
-  tamanhos.innerHTML = "";
-  Object.keys(produtoAtual.precos || {}).forEach(t => {
-    const b = document.createElement("button");
-    b.innerText = `${t} R$ ${Number(produtoAtual.precos[t]).toFixed(2)}`;
-    b.onclick = () => {
-      selecao.tamanho = t;
-      atualizarTotalModal();
-    };
-    tamanhos.appendChild(b);
-  });
-}
-
-// ================= SABORES =================
-function renderSabores() {
-  sabores.innerHTML = "";
-  (data.produtos || []).forEach(s => {
-    const b = document.createElement("button");
-    b.innerText = s.nome;
-    b.onclick = () => {
-      if (selecao.sabores.includes(s)) {
-        selecao.sabores = selecao.sabores.filter(x => x !== s);
-      } else if (selecao.sabores.length < 2) {
-        selecao.sabores.push(s);
-      }
-      atualizarTotalModal();
-    };
-    sabores.appendChild(b);
-  });
-}
-
-// ================= EXTRAS =================
-function renderExtras() {
-  extrasModal.innerHTML = "";
-  const lista = []
-    .concat(data.extras || [])
-    .concat(data.bordas || [])
-    .concat(data.adicionais || [])
-    .concat(data.bebidas || []);
-
-  lista.forEach(e => {
-    if (!e || e.preco == null) return;
-    const b = document.createElement("button");
-    b.innerText = `${e.nome} +R$ ${Number(e.preco).toFixed(2)}`;
-    b.onclick = () => {
-      selecao.extras.includes(e)
-        ? selecao.extras = selecao.extras.filter(x => x !== e)
-        : selecao.extras.push(e);
-      atualizarTotalModal();
-    };
-    extrasModal.appendChild(b);
-  });
-}
-
-// ================= TOTAL MODAL =================
-function atualizarTotalModal() {
-  if (!selecao.tamanho || !selecao.sabores.length) {
-    modalTotal.innerText = "0,00";
     return;
   }
-  let total = Math.max(...selecao.sabores.map(s => s.precos[selecao.tamanho]));
-  selecao.extras.forEach(e => total += e.preco);
-  modalTotal.innerText = total.toFixed(2);
+  data.produtos.filter(x=>!cat||x.categoria===cat).forEach(prod=>{
+    const d=document.createElement("div");
+    d.className="produto";
+    d.innerHTML=`<img src="${prod.imagem}"><div class="info"><h3>${prod.nome} ${prod.maisVendido?"🔥":""}</h3><p>${prod.descricao}</p><p>A partir de R$ ${prod.precos.P.toFixed(2)}</p></div><button>Adicionar</button>`;
+    d.querySelector("button").onclick=()=>abrirModal(prod);
+    p.appendChild(d);
+  });
 }
 
-// ================= ADD CARRINHO =================
-addPizza.onclick = () => {
-  carrinho.push({
-    nome: produtoAtual.nome,
-    tamanho: selecao.tamanho,
-    sabores: selecao.sabores.map(s => s.nome),
-    extras: selecao.extras,
-    obs: obsItem.value,
-    preco: parseFloat(modalTotal.innerText)
+function abrirModal(p){
+  produtoAtual=p;
+  selecao={tamanho:null,sabores:[],extras:[],obs:""};
+  document.getElementById("modalNome").innerText=p.nome;
+  document.getElementById("modalDesc").innerText=p.descricao;
+  renderTamanhos();renderSabores();renderExtras();atualizarModalTotal();
+  document.getElementById("pizzaModal").style.display="flex";
+}
+
+function renderTamanhos(){
+  const t=document.getElementById("tamanhos");t.innerHTML="";
+  Object.entries(produtoAtual.precos).forEach(([k,v])=>{
+    const b=document.createElement("button");
+    b.innerText=`${k} R$ ${v.toFixed(2)}`;
+    b.onclick=()=>{selecao.tamanho=k;atualizarModalTotal()};
+    t.appendChild(b);
   });
-  pizzaModal.style.display = "none";
+}
+
+function renderSabores(){
+  const s=document.getElementById("sabores");s.innerHTML="";
+  data.produtos.forEach(p=>{
+    const b=document.createElement("button");
+    b.innerText=p.nome;
+    b.onclick=()=>{
+      if(selecao.sabores.includes(p))selecao.sabores=selecao.sabores.filter(x=>x!==p);
+      else if(selecao.sabores.length<2)selecao.sabores.push(p);
+      atualizarModalTotal();
+    };
+    s.appendChild(b);
+  });
+}
+
+function renderExtras(){
+  const e=document.getElementById("extrasModal");e.innerHTML="";
+  [...data.bordas,...data.adicionais,...data.bebidas].forEach(x=>{
+    const b=document.createElement("button");
+    b.innerText=`${x.nome} +R$ ${x.preco.toFixed(2)}`;
+    b.onclick=()=>{
+      selecao.extras.includes(x)?selecao.extras=selecao.extras.filter(y=>y!==x):selecao.extras.push(x);
+      atualizarModalTotal();
+    };
+    e.appendChild(b);
+  });
+}
+
+function atualizarModalTotal(){
+  if(!selecao.tamanho||!selecao.sabores.length){document.getElementById("modalTotal").innerText="0,00";return}
+  let total=Math.max(...selecao.sabores.map(s=>s.precos[selecao.tamanho]));
+  selecao.extras.forEach(e=>total+=e.preco);
+  document.getElementById("modalTotal").innerText=total.toFixed(2);
+}
+
+document.getElementById("addPizza").onclick=()=>{
+  carrinho.push({
+    tipo:"pizza",
+    nome:produtoAtual.nome,
+    tamanho:selecao.tamanho,
+    sabores:selecao.sabores.map(s=>s.nome),
+    extras:selecao.extras,
+    obs:document.getElementById("obsItem").value,
+    preco:parseFloat(document.getElementById("modalTotal").innerText)
+  });
+  document.getElementById("pizzaModal").style.display="none";
   atualizarCarrinho();
 };
 
-// ================= DISTÂNCIA =================
-function haversine(lat1, lon1, lat2, lon2) {
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(lat1 * Math.PI / 180) *
-    Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-// ================= CARRINHO + TAXA =================
-function atualizarCarrinho() {
-  cartItems.innerHTML = "";
-  let subtotal = 0;
-  foraDoRaio = false;
-
-  carrinho.forEach(i => {
-    subtotal += i.preco;
-    cartItems.innerHTML += `
-      <div>
-        <strong>${i.nome} (${i.tamanho})</strong><br>
-        ${i.sabores.join(" / ")}<br>
-        R$ ${i.preco.toFixed(2)}
-        <hr>
-      </div>
-    `;
+function atualizarCarrinho(){
+  const c=document.getElementById("cartItems");c.innerHTML="";
+  let subtotal=0;
+  carrinho.forEach(i=>{
+    subtotal+=i.preco;
+    c.innerHTML+=`<div><strong>${i.nome}</strong><br>${i.sabores?i.sabores.join(" / "):i.descricao||""}<br>R$ ${i.preco.toFixed(2)}<hr></div>`;
   });
-
-  if (!navigator.geolocation) {
-    taxaEntrega = 0;
-    atualizarTotais(subtotal);
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      const km = haversine(
-        LOJA_LAT,
-        LOJA_LNG,
-        pos.coords.latitude,
-        pos.coords.longitude
-      );
-
-      if (km > config.limiteKm) {
-        foraDoRaio = true;
-        taxaEntrega = 0;
-        alert("🚫 Fora da área de entrega");
-      } else {
-        taxaEntrega =
-          km <= 3 ? 0 : Math.max(0, (km - 3) * 2);
-      }
-
-      atualizarTotais(subtotal);
-    },
-    () => {
-      taxaEntrega = 0;
-      atualizarTotais(subtotal);
-    }
-  );
+  document.getElementById("subtotal").innerText=`R$ ${subtotal.toFixed(2)}`;
+  calcularTaxa(subtotal);
+  document.getElementById("cartQtd").innerText=carrinho.length;
+  document.getElementById("upsell").innerText=data.bebidas.length?"🥤 Que tal adicionar uma bebida gelada?":"";
 }
 
-function atualizarTotais(subtotal) {
-  subtotalEl.innerText = `R$ ${subtotal.toFixed(2)}`;
-  taxaEl.innerText = `R$ ${taxaEntrega.toFixed(2)}`;
-  cartTotal.innerText = `R$ ${(subtotal + taxaEntrega).toFixed(2)}`;
-  cartQtd.innerText = carrinho.length;
+function calcularTaxa(sub){
+  if(!navigator.geolocation){taxaEntrega=0;atualizarTotais(sub);return}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const km=haversine(data.config.lojaLat||-16.6001442,data.config.lojaLng||-49.3848331,pos.coords.latitude,pos.coords.longitude);
+    taxaEntrega=km<=data.config.kmGratis?0:(km-data.config.kmGratis)*data.config.valorKm;
+    atualizarTotais(sub);
+  },()=>{taxaEntrega=0;atualizarTotais(sub)});
 }
 
-// ================= EVENTOS =================
-function bindEventos() {
-  openCart.onclick = () => cart.classList.toggle("active");
+function atualizarTotais(sub){
+  document.getElementById("taxa").innerText=`R$ ${taxaEntrega.toFixed(2)}`;
+  document.getElementById("cartTotal").innerText=`R$ ${(sub+taxaEntrega).toFixed(2)}`;
+}
 
-  btnWhats.onclick = e => {
-    e.preventDefault();
-    produtos.scrollIntoView({ behavior: "smooth" });
-  };
+function haversine(lat1,lon1,lat2,lon2){
+  const dLat=(lat2-lat1)*Math.PI/180;
+  const dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
 
-  finalizar.onclick = () => {
-    if (!carrinho.length) return alert("Carrinho vazio");
-    if (foraDoRaio) return alert("Endereço fora da área de entrega");
-    if (!endereco.value.trim()) return alert("Informe o endereço");
+function bindEventos(){
+  document.getElementById("openCart").onclick=()=>document.getElementById("cart").classList.toggle("active");
+  document.getElementById("closeModal").onclick=()=>document.getElementById("pizzaModal").style.display="none";
+  document.getElementById("btnWhats").onclick=e=>{e.preventDefault();document.getElementById("cart").classList.add("active")};
+  document.getElementById("finalizar").onclick=finalizarPedido;
+}
 
-    let msg = "🍕 *Pedido Bella Massa* 🍕\n\n";
-    carrinho.forEach(i => {
-      msg += `${i.nome} (${i.tamanho})\n${i.sabores.join(" / ")}\n`;
-      if (i.obs) msg += `Obs: ${i.obs}\n`;
-      msg += `R$ ${i.preco.toFixed(2)}\n\n`;
-    });
+function finalizarPedido(){
+  if(!data.config.lojaAberta)return alert("Loja fechada no momento");
+  if(!carrinho.length)return alert("Carrinho vazio");
+  const total=parseFloat(document.getElementById("cartTotal").innerText.replace("R$",""));
+  if(total<data.config.pedidoMinimo)return alert(`Pedido mínimo R$ ${data.config.pedidoMinimo.toFixed(2)}`);
+  const end=document.getElementById("endereco").value.trim();
+  if(!end)return alert("Informe o endereço");
 
-    if (obsGeral.value.trim()) {
-      msg += `📝 Obs geral: ${obsGeral.value}\n`;
-    }
-
-    msg += `🚚 Taxa: R$ ${taxaEntrega.toFixed(2)}\n`;
-    msg += `📍 Endereço: ${endereco.value}\n`;
-    msg += `💰 Total: ${cartTotal.innerText}`;
-
-    window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`);
-  };
+  let msg="🍕 *Pedido Bella Massa* 🍕\n\n";
+  carrinho.forEach(i=>{
+    msg+=`• ${i.nome}\n`;
+    if(i.sabores)msg+=`  Sabores: ${i.sabores.join(" / ")}\n`;
+    if(i.extras&&i.extras.length)msg+=`  Extras: ${i.extras.map(e=>e.nome).join(", ")}\n`;
+    msg+=`  Valor: R$ ${i.preco.toFixed(2)}\n\n`;
+  });
+  msg+=`🚚 Taxa: R$ ${taxaEntrega.toFixed(2)}\n`;
+  msg+=`📍 Endereço: ${end}\n`;
+  msg+=`💰 Total: R$ ${total.toFixed(2)}`;
+  window.open(`https://wa.me/${data.config.whatsapp}?text=${encodeURIComponent(msg)}`);
 }
