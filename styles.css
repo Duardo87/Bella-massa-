@@ -1,4 +1,4 @@
-/* styles.css (FINAL) */
+/* styles.css */
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif}
 body{background:#f4f6f5;color:#222}
 .top{background:linear-gradient(135deg,#0a7d45,#0fb36a);color:#fff;padding:16px}
@@ -31,4 +31,6 @@ main{padding:12px}
 .close{position:absolute;right:16px;top:12px;font-size:24px;font-weight:900}
 .opcoes button,.sabores button,.extras button{padding:8px 12px;border-radius:20px;border:1px solid #ccc;background:#fff;font-weight:700}
 .opcoes button.active,.sabores button.active,.extras button.active{background:#0a7d45;color:#fff;border-color:#0a7d45}
+.sabores button.disabled{opacity:.4;pointer-events:none}
+.aviso.limite{color:#e53935;font-weight:700;display:none}
 @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
