@@ -1,22 +1,56 @@
 {
   "config": {
+    "nomePizzaria": "Bella Massa",
+    "whatsapp": "62993343622",
     "lojaAberta": true,
-    "horario": "18:00 às 23:30",
+    "horario": "18:30 às 23:59",
     "tempoEntrega": "40–60 min",
     "lojaLat": -16.6003112,
     "lojaLng": -49.3847113,
     "kmGratis": 3,
     "valorKm": 2,
-    "limiteKm": 10
+    "limiteKm": 10,
+    "meioAMeio": {
+      "ativo": true,
+      "limiteSabores": 2,
+      "aviso": "⚠️ Pizza meio a meio será cobrada pelo sabor de maior valor"
+    }
   },
+
   "categorias": [
-    "Pizzas"
+    "Ofertas",
+    "Pizzas",
+    "Bebidas"
   ],
+
+  "ofertas": [
+    {
+      "id": 1,
+      "nome": "🔥 Combo Campeão",
+      "descricao": "Pizza Grande + Refrigerante 2L",
+      "preco": 54.9,
+      "destaque": true
+    },
+    {
+      "id": 2,
+      "nome": "😍 Combo Casal",
+      "descricao": "Pizza Média + Refrigerante 1,5L",
+      "preco": 44.9
+    },
+    {
+      "id": 3,
+      "nome": "👨‍👩‍👧 Combo Família",
+      "descricao": "2 Pizzas Grandes + Refrigerante 2L",
+      "preco": 99.9
+    }
+  ],
+
   "produtos": [
     {
+      "id": 101,
       "nome": "Mussarela",
       "categoria": "Pizzas",
-      "descricao": "Queijo derretido 🧀",
+      "descricao": "Queijo mussarela derretido 🧀",
       "imagem": "img/mussarela.jpg",
       "maisVendido": true,
       "precos": {
@@ -26,55 +60,117 @@
       }
     },
     {
+      "id": 102,
       "nome": "Calabresa",
       "categoria": "Pizzas",
       "descricao": "Calabresa fatiada com cebola",
       "imagem": "img/calabresa.jpg",
-      "maisVendido": false,
+      "maisVendido": true,
       "precos": {
         "P": 29.9,
         "M": 39.9,
         "G": 49.9
       }
+    },
+    {
+      "id": 103,
+      "nome": "Frango com Catupiry",
+      "categoria": "Pizzas",
+      "descricao": "Frango desfiado temperado + catupiry cremoso",
+      "imagem": "img/frango-catupiry.jpg",
+      "maisVendido": false,
+      "precos": {
+        "P": 31.9,
+        "M": 41.9,
+        "G": 51.9
+      }
+    },
+    {
+      "id": 104,
+      "nome": "Quatro Queijos",
+      "categoria": "Pizzas",
+      "descricao": "Mussarela, parmesão, provolone e catupiry",
+      "imagem": "img/quatro-queijos.jpg",
+      "maisVendido": false,
+      "precos": {
+        "P": 32.9,
+        "M": 42.9,
+        "G": 52.9
+      }
     }
   ],
+
   "bordas": [
     {
+      "id": 201,
       "nome": "Borda Catupiry",
       "preco": 7.9
     },
     {
+      "id": 202,
       "nome": "Borda Cheddar",
       "preco": 7.9
     }
   ],
+
   "adicionais": [
     {
+      "id": 301,
       "nome": "Extra Bacon",
       "preco": 5.9
     },
     {
+      "id": 302,
       "nome": "Extra Queijo",
       "preco": 4.9
     }
   ],
+
   "bebidas": [
     {
+      "id": 401,
       "nome": "Coca-Cola 2L",
       "preco": 12
     },
     {
+      "id": 402,
       "nome": "Guaraná 1,5L",
       "preco": 10
     },
     {
+      "id": 403,
       "nome": "Água",
       "preco": 4
     }
   ],
-  "promocoes": [
+
+  "promocoesSemana": [
+    {
+      "dia": "Terça",
+      "titulo": "🍕 Terça da Promoção",
+      "descricao": "Pizza Média com preço especial"
+    },
+    {
+      "dia": "Quarta",
+      "titulo": "🔥 Quarta do Combo",
+      "descricao": "Combo Campeão com desconto"
+    },
+    {
+      "dia": "Domingo",
+      "titulo": "👨‍👩‍👧 Domingo em Família",
+      "descricao": "Combos perfeitos para dividir"
+    }
+  ],
+
+  "mensagensConversao": [
     "🔥 Alta demanda hoje — peça agora!",
-    "🍕 Borda recheada por apenas R$ 7,90",
-    "🥤 Aproveite e leve uma bebida!"
-  ]
+    "🍕 As mais pedidas da Bella Massa",
+    "🥤 Aproveite e adicione uma bebida",
+    "⏰ Funcionamos até 23:59"
+  ],
+
+  "retirada": {
+    "ativa": true,
+    "descricao": "Retire na loja e economize na entrega 😉"
+  }
 }
