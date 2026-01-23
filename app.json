@@ -54,9 +54,9 @@
       "imagem": "img/mussarela.jpg",
       "maisVendido": true,
       "precos": {
-        "P": 27.9,
-        "M": 37.9,
-        "G": 47.9
+        "P": 35,
+        "M": 45,
+        "G": 55
       }
     },
     {
@@ -67,9 +67,9 @@
       "imagem": "img/calabresa.jpg",
       "maisVendido": true,
       "precos": {
-        "P": 29.9,
-        "M": 39.9,
-        "G": 49.9
+        "P": 35,
+        "M": 45,
+        "G": 55
       }
     },
     {
@@ -80,9 +80,9 @@
       "imagem": "img/frango-catupiry.jpg",
       "maisVendido": false,
       "precos": {
-        "P": 31.9,
-        "M": 41.9,
-        "G": 51.9
+        "P": 35,
+        "M": 45,
+        "G": 55
       }
     },
     {
@@ -93,9 +93,9 @@
       "imagem": "img/quatro-queijos.jpg",
       "maisVendido": false,
       "precos": {
-        "P": 32.9,
-        "M": 42.9,
-        "G": 52.9
+        "P": 35,
+        "M": 45,
+        "G": 55
       }
     }
   ],
@@ -162,10 +162,10 @@
     }
   ],
 
-  "mensagensConversao": [
+  "promocoes": [
     "🔥 Alta demanda hoje — peça agora!",
     "🍕 As mais pedidas da Bella Massa",
-    "🥤 Aproveite e adicione uma bebida",
+    "🥤 Aproveite e adicione uma bebida!",
     "⏰ Funcionamos até 23:59"
   ],
 
