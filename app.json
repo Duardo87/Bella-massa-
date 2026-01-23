@@ -4,20 +4,57 @@
     "whatsapp": "62993343622",
     "lojaAberta": true,
     "horario": "18:30 às 23:59",
+    "tempoEntrega": "40–60 min",
+    "lojaLat": -16.6001442,
+    "lojaLng": -49.3848331,
+    "kmGratis": 3,
+    "valorKm": 2,
+    "limiteKm": 10,
     "pedidoMinimo": 30,
-    "entrega": {
-      "kmGratis": 3,
-      "valorPorKm": 2,
-      "limiteKm": 10,
-      "origem": {
-        "lat": -16.6001442,
-        "lng": -49.3848331
-      }
+    "meioAMeio": {
+      "ativo": true,
+      "limiteSabores": 2,
+      "aviso": "⚠️ Pizza meio a meio será cobrada pelo sabor de maior valor"
     }
   },
-  "categorias": [
-    { "id": 1, "nome": "Pizzas" },
-    { "id": 2, "nome": "Bebidas" }
+  "categorias": ["Ofertas","Pizzas","Bebidas"],
+  "ofertas": [
+    { "nome": "🔥 Combo Campeão", "descricao": "Pizza Grande + Refrigerante 2L", "preco": 54.9 },
+    { "nome": "😍 Combo Casal", "descricao": "Pizza Média + Refrigerante 1,5L", "preco": 44.9 }
   ],
-  "produtos": []
+  "produtos": [
+    {
+      "nome": "Mussarela",
+      "categoria": "Pizzas",
+      "descricao": "Queijo mussarela derretido 🧀",
+      "imagem": "img/mussarela.jpg",
+      "maisVendido": true,
+      "precos": { "P": 35, "M": 45, "G": 55 }
+    },
+    {
+      "nome": "Calabresa",
+      "categoria": "Pizzas",
+      "descricao": "Calabresa fatiada com cebola",
+      "imagem": "img/calabresa.jpg",
+      "maisVendido": true,
+      "precos": { "P": 35, "M": 45, "G": 55 }
+    }
+  ],
+  "bordas": [
+    { "nome": "Borda Catupiry", "preco": 7.9 },
+    { "nome": "Borda Cheddar", "preco": 7.9 }
+  ],
+  "adicionais": [
+    { "nome": "Extra Bacon", "preco": 5.9 },
+    { "nome": "Extra Queijo", "preco": 4.9 }
+  ],
+  "bebidas": [
+    { "nome": "Coca-Cola 2L", "preco": 12 },
+    { "nome": "Guaraná 1,5L", "preco": 10 }
+  ],
+  "promocoes": [
+    "🔥 Alta demanda hoje — peça agora!",
+    "🍕 As mais pedidas da Bella Massa",
+    "🥤 Aproveite e adicione uma bebida!"
+  ]
 }

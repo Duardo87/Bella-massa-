@@ -1,140 +1,211 @@
 // app.js
-let data = JSON.parse(localStorage.getItem("appData"));
-let carrinho = [];
-let taxa = 0;
-let distanciaAtual = null;
+const R=6371;
+let data={},carrinho=[],produtoAtual=null,selecao={},taxaEntrega=0,distanciaKm=null;
 
-const nome = document.getElementById("nome");
-const status = document.getElementById("status");
-const categoriasEl = document.getElementById("categorias");
-const produtosEl = document.getElementById("produtos");
-const cart = document.getElementById("cart");
+document.addEventListener("DOMContentLoaded",async()=>{
+  data=JSON.parse(localStorage.getItem("appData"))||await(await fetch("app.json")).json();
+  renderHeader();renderCarousel();renderPromoDia();renderCategorias();renderProdutos();bindEventos();
+});
 
-if(!data){
-  fetch("app.json").then(r=>r.json()).then(j=>{
-    data=j;
-    localStorage.setItem("appData",JSON.stringify(j));
-    init();
-  });
-}else init();
-
-function init(){
-  nome.innerText = data.config.nomePizzaria;
-  status.innerText = data.config.lojaAberta ? "ABERTO" : "FECHADO";
-
-  categoriasEl.innerHTML="";
-  data.categorias.forEach(c=>{
-    const b=document.createElement("button");
-    b.innerText=c.nome;
-    b.onclick=()=>listar(c.id);
-    categoriasEl.appendChild(b);
-  });
+function renderHeader(){
+  statusLoja.innerText=data.config.lojaAberta?"ABERTO AGORA":"FECHADO";
+  horario.innerText=data.config.horario;
+  tempoEntrega.innerText=`⏱ ${data.config.tempoEntrega}`;
+  avisoMeio.innerText=data.config.meioAMeio.aviso;
 }
 
-function listar(cat){
-  produtosEl.innerHTML="";
-  data.produtos.filter(p=>p.categoria===cat).forEach(p=>{
+function renderCarousel(){
+  carousel.innerHTML="";
+  data.promocoes.forEach(p=>{const d=document.createElement("div");d.innerText=p;carousel.appendChild(d)});
+}
+
+function renderPromoDia(){
+  const dias=["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+  promoDia.innerText=`🔥 Promoção de ${dias[new Date().getDay()]} ativa hoje!`;
+}
+
+function renderCategorias(){
+  categorias.innerHTML="";
+  data.categorias.forEach(c=>{const b=document.createElement("button");b.innerText=c;b.onclick=()=>renderProdutos(c);categorias.appendChild(b)});
+}
+
+function renderProdutos(cat){
+  produtos.innerHTML="";
+  if(cat==="Bebidas"){
+    data.bebidas.forEach(b=>{
+      const d=document.createElement("div");
+      d.className="produto";
+      d.innerHTML=`<div class="info"><h3>${b.nome}</h3><p>R$ ${b.preco.toFixed(2)}</p></div><button>Adicionar bebida</button>`;
+      d.querySelector("button").onclick=()=>{
+        carrinho.push({tipo:"bebida",nome:b.nome,preco:b.preco});
+        atualizarCarrinho();
+      };
+      produtos.appendChild(d);
+    });
+    return;
+  }
+  if(cat==="Ofertas"){
+    data.ofertas.forEach(o=>{
+      const d=document.createElement("div");
+      d.className="produto";
+      d.innerHTML=`<div class="info"><h3>${o.nome}</h3><p>${o.descricao}</p><p><strong>R$ ${o.preco.toFixed(2)}</strong></p></div><button>Adicionar</button>`;
+      d.querySelector("button").onclick=()=>{
+        carrinho.push({tipo:"combo",nome:o.nome,descricao:o.descricao,preco:o.preco});
+        atualizarCarrinho();
+      };
+      produtos.appendChild(d);
+    });
+    return;
+  }
+  data.produtos.filter(p=>!cat||p.categoria===cat).forEach(p=>{
     const d=document.createElement("div");
     d.className="produto";
-    const img = p.imagem || "https://via.placeholder.com/400x300?text=Produto";
-    d.innerHTML=`<img src="${img}"><h3>${p.nome}</h3><p>R$ ${p.preco.toFixed(2)}</p><button>Adicionar</button>`;
-    d.querySelector("button").onclick=()=>{
-      if(!data.config.lojaAberta) return alert("Loja fechada");
-      carrinho.push({nome:p.nome,preco:p.preco});
-      atualizar();
+    d.innerHTML=`<img src="${p.imagem}"><div class="info"><h3>${p.nome} ${p.maisVendido?"🔥":""}</h3><p>${p.descricao}</p><p>A partir de R$ ${p.precos.P.toFixed(2)}</p></div><button>Adicionar</button>`;
+    d.querySelector("button").onclick=()=>abrirModal(p);
+    produtos.appendChild(d);
+  });
+}
+
+function abrirModal(p){
+  produtoAtual=p;
+  selecao={tamanho:null,sabores:[],extras:[],obs:""};
+  avisoLimite.style.display="none";
+  modalNome.innerText=p.nome;
+  modalDesc.innerText=p.descricao;
+  renderTamanhos();renderSabores();renderExtras();atualizarModalTotal();
+  pizzaModal.style.display="flex";
+}
+
+function renderTamanhos(){
+  tamanhos.innerHTML="";
+  Object.entries(produtoAtual.precos).forEach(([k,v])=>{
+    const b=document.createElement("button");
+    b.innerText=`${k} R$ ${v.toFixed(2)}`;
+    b.onclick=()=>{selecao.tamanho=k;atualizarModalTotal()};
+    tamanhos.appendChild(b);
+  });
+}
+
+function renderSabores(){
+  sabores.innerHTML="";
+  data.produtos.forEach(s=>{
+    const b=document.createElement("button");
+    b.innerText=s.nome;
+    b.onclick=()=>{
+      if(selecao.sabores.includes(s))selecao.sabores=selecao.sabores.filter(x=>x!==s);
+      else if(selecao.sabores.length<2)selecao.sabores.push(s);
+      atualizarModalTotal();
+      atualizarFeedbackSabores();
     };
-    produtosEl.appendChild(d);
+    sabores.appendChild(b);
   });
 }
 
-function atualizar(){
-  const items=document.getElementById("items");
-  items.innerHTML="";
-  let sub=0;
-
-  carrinho.forEach((i,idx)=>{
-    sub+=i.preco;
-    items.innerHTML+=`${i.nome} - R$ ${i.preco.toFixed(2)} <button onclick="rem(${idx})">🗑</button><br>`;
-  });
-
-  document.getElementById("subtotal").innerText=`R$ ${sub.toFixed(2)}`;
-  calcularTaxa(sub);
-  document.getElementById("qtd").innerText=carrinho.length;
+function atualizarFeedbackSabores(){
+  const buttons=[...sabores.children];
+  if(selecao.sabores.length===2){
+    avisoLimite.style.display="block";
+    avisoLimite.innerText="Limite de 2 sabores atingido";
+    buttons.forEach(b=>{
+      if(!selecao.sabores.some(s=>s.nome===b.innerText))b.classList.add("disabled");
+    });
+  }else{
+    avisoLimite.style.display="none";
+    buttons.forEach(b=>b.classList.remove("disabled"));
+  }
 }
 
-function rem(i){
-  carrinho.splice(i,1);
-  atualizar();
+function renderExtras(){
+  extrasModal.innerHTML="";
+  [...data.bordas,...data.adicionais].forEach(e=>{
+    const b=document.createElement("button");
+    b.innerText=`${e.nome} +R$ ${e.preco.toFixed(2)}`;
+    b.onclick=()=>{
+      selecao.extras.includes(e)?selecao.extras=selecao.extras.filter(x=>x!==e):selecao.extras.push(e);
+      atualizarModalTotal();
+    };
+    extrasModal.appendChild(b);
+  });
+}
+
+function atualizarModalTotal(){
+  if(!selecao.tamanho||!selecao.sabores.length){modalTotal.innerText="0,00";return}
+  let total=Math.max(...selecao.sabores.map(s=>s.precos[selecao.tamanho]));
+  selecao.extras.forEach(e=>total+=e.preco);
+  modalTotal.innerText=total.toFixed(2);
+}
+
+addPizza.onclick=()=>{
+  carrinho.push({tipo:"pizza",nome:produtoAtual.nome,sabores:selecao.sabores.map(s=>s.nome),extras:selecao.extras,preco:parseFloat(modalTotal.innerText)});
+  pizzaModal.style.display="none";
+  atualizarCarrinho();
+};
+
+function atualizarCarrinho(){
+  cartItems.innerHTML="";
+  let subtotal=0;
+  carrinho.forEach(i=>{
+    subtotal+=i.preco;
+    const d=document.createElement("div");
+    d.innerHTML=`<strong>${i.nome}</strong><br>${i.sabores?i.sabores.join(" / "):""}<br>R$ ${i.preco.toFixed(2)}<hr>`;
+    cartItems.appendChild(d);
+  });
+  subtotalEl.innerText=`R$ ${subtotal.toFixed(2)}`;
+  calcularTaxa(subtotal);
+  cartQtd.innerText=carrinho.length;
 }
 
 function calcularTaxa(sub){
-  taxa=0;
-  if(sub<=0){
-    atualizarTotais(sub);
-    return;
-  }
-
-  if(!navigator.geolocation){
-    alert("Geolocalização não suportada");
-    return;
-  }
-
+  if(distanciaKm!==null){aplicarTaxa(sub);return}
+  if(!navigator.geolocation){taxaEntrega=0;atualizarTotais(sub);return}
   navigator.geolocation.getCurrentPosition(pos=>{
-    distanciaAtual = distanciaKm(
-      pos.coords.latitude,
-      pos.coords.longitude,
-      data.config.entrega.origem.lat,
-      data.config.entrega.origem.lng
-    );
+    distanciaKm=haversine(data.config.lojaLat,data.config.lojaLng,pos.coords.latitude,pos.coords.longitude);
+    aplicarTaxa(sub);
+  },()=>{taxaEntrega=0;atualizarTotais(sub)});
+}
 
-    if(data.config.entrega.limiteKm && distanciaAtual>data.config.entrega.limiteKm){
-      alert("Fora da área de entrega");
-      taxa=0;
-      atualizarTotais(sub);
-      return;
-    }
-
-    const extra = Math.max(0, distanciaAtual - data.config.entrega.kmGratis);
-    taxa = extra * data.config.entrega.valorPorKm;
-    atualizarTotais(sub);
-  },()=>{
-    alert("Localização obrigatória para calcular entrega");
-  });
+function aplicarTaxa(sub){
+  if(distanciaKm>data.config.limiteKm){alert("🚫 Fora da área de entrega");taxaEntrega=0;atualizarTotais(sub);return}
+  taxaEntrega=distanciaKm<=data.config.kmGratis?0:(distanciaKm-data.config.kmGratis)*data.config.valorKm;
+  atualizarTotais(sub);
 }
 
 function atualizarTotais(sub){
-  document.getElementById("taxa").innerText=`R$ ${taxa.toFixed(2)}`;
-  document.getElementById("total").innerText=`R$ ${(sub+taxa).toFixed(2)}`;
+  taxaEl.innerText=`R$ ${taxaEntrega.toFixed(2)}`;
+  cartTotal.innerText=`R$ ${(sub+taxaEntrega).toFixed(2)}`;
 }
 
-function distanciaKm(lat1,lon1,lat2,lon2){
-  const R=6371;
+function haversine(lat1,lon1,lat2,lon2){
   const dLat=(lat2-lat1)*Math.PI/180;
   const dLon=(lon2-lon1)*Math.PI/180;
   const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
-document.getElementById("openCart").onclick=()=>cart.classList.toggle("active");
+function bindEventos(){
+  openCart.onclick=()=>cart.classList.toggle("active");
+  closeModal.onclick=()=>pizzaModal.style.display="none";
+  btnWhats.onclick=e=>{e.preventDefault();cart.classList.add("active")};
+  finalizar.onclick=finalizarPedido;
+}
 
-document.getElementById("finalizar").onclick=()=>{
-  if(!carrinho.length) return alert("Carrinho vazio");
-  if(!data.config.lojaAberta) return alert("Loja fechada");
+function finalizarPedido(){
+  if(!data.config.lojaAberta)return alert("Loja fechada");
+  if(!carrinho.length)return alert("Carrinho vazio");
+  const total=parseFloat(cartTotal.innerText.replace("R$",""));
+  if(total<data.config.pedidoMinimo)return alert(`Pedido mínimo R$ ${data.config.pedidoMinimo.toFixed(2)}`);
+  if(distanciaKm>data.config.limiteKm)return;
+  if(!endereco.value.trim())return alert("Informe o endereço");
 
-  const endereco=document.getElementById("endereco").value.trim();
-  if(!endereco) return alert("Informe o endereço");
-
-  const sub=carrinho.reduce((s,i)=>s+i.preco,0);
-  const total=sub+taxa;
-
-  if(total<data.config.pedidoMinimo) return alert("Pedido mínimo não atingido");
-
-  let msg=`Pedido ${data.config.nomePizzaria}\n\n`;
-  carrinho.forEach(i=>msg+=`${i.nome} - R$ ${i.preco.toFixed(2)}\n`);
-  msg+=`\nSubtotal: R$ ${sub.toFixed(2)}\nTaxa: R$ ${taxa.toFixed(2)}\nTotal: R$ ${total.toFixed(2)}\n\nEndereço: ${endereco}`;
-
-  const obs=document.getElementById("obs").value.trim();
-  if(obs) msg+=`\nObs: ${obs}`;
-
+  let msg="🍕 *Pedido Bella Massa* 🍕\n\n";
+  carrinho.forEach(i=>{
+    msg+=`• ${i.nome}\n`;
+    if(i.sabores)msg+=`  Sabores: ${i.sabores.join(" / ")}\n`;
+    msg+=`  Valor: R$ ${i.preco.toFixed(2)}\n\n`;
+  });
+  if(obsGeral.value.trim())msg+=`📝 Obs: ${obsGeral.value}\n\n`;
+  msg+=`🚚 Taxa: R$ ${taxaEntrega.toFixed(2)}\n`;
+  msg+=`📍 Endereço: ${endereco.value}\n`;
+  msg+=`💰 Total: R$ ${total.toFixed(2)}`;
   window.open(`https://wa.me/${data.config.whatsapp}?text=${encodeURIComponent(msg)}`);
-};
+}
