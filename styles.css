@@ -42,3 +42,75 @@ main{padding:12px}
 .list{margin-top:8px}
 .list-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;border:1px solid #eee;margin-bottom:8px;background:#fafafa}
 .img-preview{width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid #ddd}
+/* Destaque visual "Mais pedido" - primeiro produto */
+#produtos .produto:nth-child(1){
+  border:2px solid #ff9800;
+  position:relative;
+}
+
+#produtos .produto:nth-child(1)::before{
+  content:"⭐ MAIS PEDIDO";
+  position:absolute;
+  top:12px;
+  left:12px;
+  background:#ff9800;
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+  padding:6px 10px;
+  border-radius:20px;
+  z-index:2;
+}
+.produto .info p:last-child{
+  font-size:18px;
+  font-weight:900;
+  color:#0a7d45;
+}
+.produto button{
+  position:relative;
+}
+
+.produto button::after{
+  content:"🔥 Últimas unidades hoje";
+  display:block;
+  font-size:11px;
+  font-weight:700;
+  opacity:.9;
+}
+.produto button{
+  transition:transform .08s ease, box-shadow .08s ease;
+}
+
+.produto button:active{
+  transform:scale(.97);
+  box-shadow:0 2px 6px rgba(0,0,0,.25) inset;
+}
+.produto button{
+  transition:transform .08s ease, box-shadow .08s ease;
+}
+
+.produto button:active{
+  transform:scale(.97);
+  box-shadow:0 2px 6px rgba(0,0,0,.25) inset;
+}
+.btn-whats{
+  box-shadow:0 0 0 rgba(37,211,102,.7);
+  animation:ctaPulse 1.4s infinite;
+}
+
+@keyframes ctaPulse{
+  0%{box-shadow:0 0 0 0 rgba(37,211,102,.7)}
+  70%{box-shadow:0 0 0 16px rgba(37,211,102,0)}
+  100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}
+}
+.total-final{
+  background:#f1fff6;
+  padding:12px;
+  border-radius:12px;
+}
+
+.total-final span:last-child{
+  font-size:24px;
+  font-weight:900;
+  color:#0a7d45;
+}
